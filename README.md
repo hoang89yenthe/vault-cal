@@ -1,5 +1,7 @@
 # Vault Cal — Flutter Base Project
 
+[![CI](https://github.com/hoang89yenthe/vault-cal/actions/workflows/ci.yml/badge.svg)](https://github.com/hoang89yenthe/vault-cal/actions/workflows/ci.yml)
+
 Dự án base Flutter theo **Clean Architecture** (feature-first) với **Bloc/Cubit**.
 
 ## Tech stack
