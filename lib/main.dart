@@ -1,0 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'app/app.dart';
+import 'core/di/injection.dart';
+import 'core/utils/app_bloc_observer.dart';
+import 'features/vault/data/repositories/media_repository_impl.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await configureDependencies();
+  Bloc.observer = const AppBlocObserver();
+
+  // Wipe any decrypted temp files left over from a previous session.
+  await MediaRepositoryImpl.sweepDecryptCache();
+
+  runApp(const App());
+}

@@ -1,0 +1,72 @@
+{
+  "@@locale": "en",
+  "appTitle": "Vault Cal",
+  "homeTitle": "Home",
+  "welcomeMessage": "Welcome to the Flutter base project!",
+  "postsDemo": "Posts demo (REST API)",
+  "postsTitle": "Posts",
+  "darkMode": "Dark mode",
+  "retry": "Retry",
+  "errorOccurred": "Something went wrong",
+  "emptyList": "No data available",
+
+  "authTitle": "Security verification",
+  "authLayer": "Layer 1 · Biometrics",
+  "scanningFingerprint": "Scanning fingerprint…",
+  "authenticated": "Authenticated",
+  "pinTitle": "Layer 2 PIN",
+  "pinSubtitle": "Enter 4 digits to continue",
+
+  "unlockedBadge": "Unlocked",
+  "privateVaultTitle": "Private vault",
+  "lockAction": "Lock",
+  "decoyGreeting": "Hello 👋",
+  "decoyVaultTitle": "My vault",
+  "storageUsed": "Storage used",
+  "legendPhotos": "Photos",
+  "legendVideos": "Videos",
+  "legendOther": "Other",
+  "itemsCount": "{count} items",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addToVault": "Add to vault",
+  "addPhotosVideos": "Photos & Videos",
+  "addPhotosVideosSub": "From your library",
+  "addDocuments": "Documents",
+  "addDocumentsSub": "PDF, Word, Excel…",
+
+  "settingsTitle": "Settings",
+  "premiumTitle": "Vault Premium",
+  "premiumSubtitle": "Unlock all premium features",
+  "sectionSecurity": "SECURITY",
+  "changeSecretCode": "Change secret code",
+  "changeRealPassword": "Change real password",
+  "changeFakePassword": "Change fake password",
+  "fingerprintUnlock": "Unlock with fingerprint",
+  "sectionIntruder": "INTRUDER PROTECTION",
+  "intruderSelfie": "Intruder Selfie",
+  "intruderSelfieSub": "Snap a photo after 3 wrong password attempts",
+  "intruderLog": "Intruder log",
+  "sectionDisguise": "DISGUISE",
+  "changeDisguiseIcon": "Change disguise icon",
+  "iconCalc": "Calculator",
+  "iconWeather": "Weather",
+  "iconCompass": "Compass",
+
+  "paywallFeature1": "Intruder Selfie on break-in attempts",
+  "paywallFeature2": "Disguise icons (Weather, Compass)",
+  "paywallFeature3": "Unlimited storage",
+  "paywallFeature4": "No ads, priority support",
+  "planYearTitle": "1 Year",
+  "planYearPrice": "99.000đ",
+  "planLifetimeTitle": "Lifetime",
+  "planLifetimePrice": "249.000đ",
+  "saveBadge": "SAVE 60%",
+  "startTrial": "Start 7-day free trial",
+  "restorePurchase": "Restore purchases"
+}
