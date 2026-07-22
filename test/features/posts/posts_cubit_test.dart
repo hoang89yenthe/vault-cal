@@ -29,8 +29,9 @@ void main() {
     blocTest<PostsCubit, PostsState>(
       'emits [PostsLoading, PostsLoaded] when getPosts succeeds',
       build: () {
-        when(() => repository.getPosts())
-            .thenAnswer((_) async => const Ok(posts));
+        when(
+          () => repository.getPosts(),
+        ).thenAnswer((_) async => const Ok(posts));
         return PostsCubit(repository);
       },
       act: (cubit) => cubit.fetchPosts(),
@@ -40,8 +41,9 @@ void main() {
     blocTest<PostsCubit, PostsState>(
       'emits [PostsLoading, PostsError] when getPosts fails',
       build: () {
-        when(() => repository.getPosts())
-            .thenAnswer((_) async => const Err(NetworkFailure('offline')));
+        when(
+          () => repository.getPosts(),
+        ).thenAnswer((_) async => const Err(NetworkFailure('offline')));
         return PostsCubit(repository);
       },
       act: (cubit) => cubit.fetchPosts(),

@@ -41,16 +41,16 @@ class _ChangeCodeViewState extends State<_ChangeCodeView>
   );
 
   String _title(CodeType type) => switch (type) {
-        CodeType.secret => 'Đổi mật mã bí mật',
-        CodeType.realPin => 'Đổi PIN thật',
-        CodeType.decoyPin => 'Đổi PIN giả',
-      };
+    CodeType.secret => 'Đổi mật mã bí mật',
+    CodeType.realPin => 'Đổi PIN thật',
+    CodeType.decoyPin => 'Đổi PIN giả',
+  };
 
   String _stepLabel(ChangeCodeStep step) => switch (step) {
-        ChangeCodeStep.verifyOld => 'Nhập mã hiện tại',
-        ChangeCodeStep.enterNew => 'Nhập mã mới (4 chữ số)',
-        ChangeCodeStep.confirmNew => 'Nhập lại mã mới',
-      };
+    ChangeCodeStep.verifyOld => 'Nhập mã hiện tại',
+    ChangeCodeStep.enterNew => 'Nhập mã mới (4 chữ số)',
+    ChangeCodeStep.confirmNew => 'Nhập lại mã mới',
+  };
 
   @override
   void dispose() {
@@ -96,7 +96,10 @@ class _ChangeCodeViewState extends State<_ChangeCodeView>
                   height: 20,
                   child: Text(
                     state.error ?? '',
-                    style: const TextStyle(color: VaultColors.red, fontSize: 13),
+                    style: const TextStyle(
+                      color: VaultColors.red,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -106,15 +109,17 @@ class _ChangeCodeViewState extends State<_ChangeCodeView>
                     final t = _shake.value;
                     final dx = math.sin(t * math.pi * 6) * 8 * (1 - t);
                     return Transform.translate(
-                        offset: Offset(dx, 0), child: child);
+                      offset: Offset(dx, 0),
+                      child: child,
+                    );
                   },
-                  child: _Dots(count: state.input.length, error: state.error != null),
+                  child: _Dots(
+                    count: state.input.length,
+                    error: state.error != null,
+                  ),
                 ),
                 const Spacer(),
-                _Keypad(
-                  onDigit: cubit.addDigit,
-                  onBackspace: cubit.backspace,
-                ),
+                _Keypad(onDigit: cubit.addDigit, onBackspace: cubit.backspace),
                 const SizedBox(height: 40),
               ],
             ),
@@ -145,15 +150,15 @@ class _Dots extends StatelessWidget {
             color: error
                 ? VaultColors.red
                 : filled
-                    ? VaultColors.accentLight
-                    : Colors.transparent,
+                ? VaultColors.accentLight
+                : Colors.transparent,
             shape: BoxShape.circle,
             border: Border.all(
               color: error
                   ? VaultColors.red
                   : filled
-                      ? VaultColors.accentLight
-                      : VaultColors.textFaint,
+                  ? VaultColors.accentLight
+                  : VaultColors.textFaint,
               width: 1.5,
             ),
           ),
@@ -202,24 +207,33 @@ class _Keypad extends StatelessWidget {
     }
 
     Widget row(List<Widget> children) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (final c in children)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: c,
-                ),
-            ],
-          ),
-        );
+      padding: const EdgeInsets.symmetric(vertical: 9),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (final c in children)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: c,
+            ),
+        ],
+      ),
+    );
 
     return Column(
       children: [
-        row([for (final d in ['1', '2', '3']) key(digit: d, onTap: () => onDigit(d))]),
-        row([for (final d in ['4', '5', '6']) key(digit: d, onTap: () => onDigit(d))]),
-        row([for (final d in ['7', '8', '9']) key(digit: d, onTap: () => onDigit(d))]),
+        row([
+          for (final d in ['1', '2', '3'])
+            key(digit: d, onTap: () => onDigit(d)),
+        ]),
+        row([
+          for (final d in ['4', '5', '6'])
+            key(digit: d, onTap: () => onDigit(d)),
+        ]),
+        row([
+          for (final d in ['7', '8', '9'])
+            key(digit: d, onTap: () => onDigit(d)),
+        ]),
         row([
           key(),
           key(digit: '0', onTap: () => onDigit('0')),

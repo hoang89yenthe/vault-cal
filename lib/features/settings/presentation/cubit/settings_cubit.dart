@@ -11,7 +11,7 @@ part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit(this._storage, this._purchases)
-      : super(_restore(_storage, _purchases.isPremium)) {
+    : super(_restore(_storage, _purchases.isPremium)) {
     _premiumSub = _purchases.premiumStream.listen((premium) {
       emit(state.copyWith(premium: premium));
     });
@@ -29,8 +29,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     return SettingsState(
       fingerprint: storage.getBool(_kFingerprint) ?? true,
       intruder: storage.getBool(_kIntruder) ?? false,
-      disguise: DisguiseIcon.values.asNameMap()[
-              storage.getString(_kDisguise) ?? ''] ??
+      disguise:
+          DisguiseIcon.values.asNameMap()[storage.getString(_kDisguise) ??
+              ''] ??
           DisguiseIcon.calc,
       premium: premium,
     );

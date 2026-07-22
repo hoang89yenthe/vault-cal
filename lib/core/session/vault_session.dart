@@ -52,7 +52,10 @@ class VaultSession {
     }
 
     final dbPath = p.join(root, 'vault_$ns.db');
-    await _keyManager.assertRecoverable(ns, dbExists: File(dbPath).existsSync());
+    await _keyManager.assertRecoverable(
+      ns,
+      dbExists: File(dbPath).existsSync(),
+    );
     final key = await _keyManager.databaseKey(ns);
     _db = VaultDatabase.open(dbPath, key);
   }

@@ -23,9 +23,7 @@ abstract final class FileCrypto {
     required String destPath,
     required Uint8List dek,
   }) {
-    return Isolate.run(
-      () => _EncryptRequest(sourcePath, destPath, dek).run(),
-    );
+    return Isolate.run(() => _EncryptRequest(sourcePath, destPath, dek).run());
   }
 
   /// Decrypts [sourcePath] fully into memory. Use only for images/thumbnails.
@@ -33,9 +31,7 @@ abstract final class FileCrypto {
     required String sourcePath,
     required Uint8List dek,
   }) {
-    return Isolate.run(
-      () => _DecryptToBytesRequest(sourcePath, dek).run(),
-    );
+    return Isolate.run(() => _DecryptToBytesRequest(sourcePath, dek).run());
   }
 
   /// Decrypts [sourcePath] to [destPath] on disk. Use for videos/documents.
@@ -56,9 +52,7 @@ abstract final class FileCrypto {
     required String destPath,
     required Uint8List dek,
   }) {
-    return Isolate.run(
-      () => _EncryptBytesRequest(bytes, destPath, dek).run(),
-    );
+    return Isolate.run(() => _EncryptBytesRequest(bytes, destPath, dek).run());
   }
 }
 
@@ -90,7 +84,11 @@ class _EncryptRequest {
     final input = File(sourcePath).openSync();
     final output = File(destPath).openSync(mode: FileMode.write);
     try {
-      output.writeFromSync([...FileCrypto._magic, FileCrypto._version, ...prefix]);
+      output.writeFromSync([
+        ...FileCrypto._magic,
+        FileCrypto._version,
+        ...prefix,
+      ]);
       var index = 0;
       while (true) {
         final plain = input.readSync(FileCrypto._chunkSize);
@@ -102,8 +100,13 @@ class _EncryptRequest {
         );
         final payload = Uint8List(box.cipherText.length + box.mac.bytes.length)
           ..setRange(0, box.cipherText.length, box.cipherText)
-          ..setRange(box.cipherText.length, box.cipherText.length + box.mac.bytes.length, box.mac.bytes);
-        final lenHeader = ByteData(4)..setUint32(0, payload.length, Endian.little);
+          ..setRange(
+            box.cipherText.length,
+            box.cipherText.length + box.mac.bytes.length,
+            box.mac.bytes,
+          );
+        final lenHeader = ByteData(4)
+          ..setUint32(0, payload.length, Endian.little);
         output.writeFromSync(lenHeader.buffer.asUint8List());
         output.writeFromSync(payload);
         index++;
@@ -128,7 +131,11 @@ class _EncryptBytesRequest {
     final prefix = _randomPrefix();
     final output = File(destPath).openSync(mode: FileMode.write);
     try {
-      output.writeFromSync([...FileCrypto._magic, FileCrypto._version, ...prefix]);
+      output.writeFromSync([
+        ...FileCrypto._magic,
+        FileCrypto._version,
+        ...prefix,
+      ]);
       var index = 0;
       var offset = 0;
       while (offset < bytes.length) {
@@ -141,8 +148,13 @@ class _EncryptBytesRequest {
         );
         final payload = Uint8List(box.cipherText.length + box.mac.bytes.length)
           ..setRange(0, box.cipherText.length, box.cipherText)
-          ..setRange(box.cipherText.length, box.cipherText.length + box.mac.bytes.length, box.mac.bytes);
-        final lenHeader = ByteData(4)..setUint32(0, payload.length, Endian.little);
+          ..setRange(
+            box.cipherText.length,
+            box.cipherText.length + box.mac.bytes.length,
+            box.mac.bytes,
+          );
+        final lenHeader = ByteData(4)
+          ..setUint32(0, payload.length, Endian.little);
         output.writeFromSync(lenHeader.buffer.asUint8List());
         output.writeFromSync(payload);
         index++;
@@ -176,10 +188,14 @@ class _ChunkReader {
   Future<Uint8List?> next(AesGcm algo, SecretKey key) async {
     final lenBytes = raf.readSync(4);
     if (lenBytes.isEmpty) return null;
-    final payloadLen =
-        ByteData.sublistView(Uint8List.fromList(lenBytes)).getUint32(0, Endian.little);
+    final payloadLen = ByteData.sublistView(
+      Uint8List.fromList(lenBytes),
+    ).getUint32(0, Endian.little);
     final payload = raf.readSync(payloadLen);
-    final cipherText = payload.sublist(0, payload.length - FileCrypto._tagLength);
+    final cipherText = payload.sublist(
+      0,
+      payload.length - FileCrypto._tagLength,
+    );
     final mac = Mac(payload.sublist(payload.length - FileCrypto._tagLength));
     final clear = await algo.decrypt(
       SecretBox(cipherText, nonce: _nonceFor(prefix, index), mac: mac),

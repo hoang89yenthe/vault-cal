@@ -21,9 +21,9 @@ class NotesRepositoryImpl implements NotesRepository {
   @override
   Future<Result<List<VaultNote>>> listNotes() async {
     try {
-      final rows = await (_db.select(_db.notes)
-            ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-          .get();
+      final rows = await (_db.select(
+        _db.notes,
+      )..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])).get();
       return Ok(rows.map(_map).toList());
     } on Object catch (e) {
       return Err(StorageFailure(e.toString()));
@@ -39,7 +39,9 @@ class NotesRepositoryImpl implements NotesRepository {
     try {
       final now = DateTime.now().millisecondsSinceEpoch;
       if (id == null) {
-        await _db.into(_db.notes).insert(
+        await _db
+            .into(_db.notes)
+            .insert(
               NotesCompanion.insert(
                 id: _uuid.v4(),
                 title: title,
@@ -74,9 +76,9 @@ class NotesRepositoryImpl implements NotesRepository {
   }
 
   VaultNote _map(NoteRow row) => VaultNote(
-        id: row.id,
-        title: row.title,
-        body: row.body,
-        updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt),
-      );
+    id: row.id,
+    title: row.title,
+    body: row.body,
+    updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt),
+  );
 }

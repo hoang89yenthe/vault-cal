@@ -24,6 +24,12 @@ class CalculatorState extends Equatable {
   final bool secretTriggered;
 
   @override
-  List<Object?> get props =>
-      [current, subline, accumulator, pendingOp, justEvaluated, secretTriggered];
+  List<Object?> get props => [
+    current,
+    subline,
+    accumulator,
+    pendingOp,
+    justEvaluated,
+    secretTriggered,
+  ];
 }

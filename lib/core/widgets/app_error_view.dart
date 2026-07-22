@@ -25,10 +25,7 @@ class AppErrorView extends StatelessWidget {
             Text(message, textAlign: TextAlign.center),
             if (onRetry != null) ...[
               const SizedBox(height: 16),
-              FilledButton(
-                onPressed: onRetry,
-                child: Text(context.l10n.retry),
-              ),
+              FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
             ],
           ],
         ),

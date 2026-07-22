@@ -55,7 +55,9 @@ class MediaRepositoryImpl implements MediaRepository {
     final sizeBytes = File(source.path).lengthSync();
     final hasThumb = await _generateThumbnail(id, source, dek);
 
-    await _db.into(_db.vaultFiles).insert(
+    await _db
+        .into(_db.vaultFiles)
+        .insert(
           VaultFilesCompanion.insert(
             id: id,
             category: source.category.storageKey,
@@ -118,10 +120,11 @@ class MediaRepositoryImpl implements MediaRepository {
   @override
   Future<Result<List<VaultFile>>> listFiles(MediaCategory category) async {
     try {
-      final rows = await (_db.select(_db.vaultFiles)
-            ..where((t) => t.category.equals(category.storageKey))
-            ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
-          .get();
+      final rows =
+          await (_db.select(_db.vaultFiles)
+                ..where((t) => t.category.equals(category.storageKey))
+                ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+              .get();
       return Ok(rows.map(_mapRow).toList());
     } on Object catch (e) {
       return Err(StorageFailure(e.toString()));
@@ -229,8 +232,9 @@ class MediaRepositoryImpl implements MediaRepository {
   }
 
   Future<VaultFileRow?> _rawRow(String id) {
-    return (_db.select(_db.vaultFiles)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    return (_db.select(
+      _db.vaultFiles,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   void _safeDelete(String path) {
@@ -239,12 +243,12 @@ class MediaRepositoryImpl implements MediaRepository {
   }
 
   VaultFile _mapRow(VaultFileRow row) => VaultFile(
-        id: row.id,
-        category: MediaCategoryX.fromKey(row.category),
-        name: row.name,
-        mime: row.mime,
-        sizeBytes: row.sizeBytes,
-        createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt),
-        hasThumb: row.hasThumb,
-      );
+    id: row.id,
+    category: MediaCategoryX.fromKey(row.category),
+    name: row.name,
+    mime: row.mime,
+    sizeBytes: row.sizeBytes,
+    createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt),
+    hasThumb: row.hasThumb,
+  );
 }

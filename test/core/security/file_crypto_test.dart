@@ -23,8 +23,10 @@ void main() {
     final enc = '${tmp.path}/out.vlt';
 
     await FileCrypto.encryptFile(sourcePath: src.path, destPath: enc, dek: dek);
-    final decrypted =
-        await FileCrypto.decryptToBytes(sourcePath: enc, dek: dek);
+    final decrypted = await FileCrypto.decryptToBytes(
+      sourcePath: enc,
+      dek: dek,
+    );
 
     expect(decrypted, equals(src.readAsBytesSync()));
   });

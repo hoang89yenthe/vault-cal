@@ -90,7 +90,10 @@ class _UnlockPageState extends State<UnlockPage> with TickerProviderStateMixin {
               const SizedBox(height: 6),
               Text(
                 l10n.authLayer,
-                style: const TextStyle(fontSize: 14, color: VaultColors.textSub),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: VaultColors.textSub,
+                ),
               ),
               const SizedBox(height: 44),
               SizedBox(
@@ -118,8 +121,9 @@ class _UnlockPageState extends State<UnlockPage> with TickerProviderStateMixin {
                       child: Icon(
                         _done ? Icons.check_rounded : Icons.fingerprint,
                         size: _done ? 56 : 64,
-                        color:
-                            _done ? VaultColors.green : VaultColors.accentLight,
+                        color: _done
+                            ? VaultColors.green
+                            : VaultColors.accentLight,
                       ),
                     ),
                     if (!_done)
@@ -136,8 +140,9 @@ class _UnlockPageState extends State<UnlockPage> with TickerProviderStateMixin {
                                 borderRadius: BorderRadius.circular(1),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: VaultColors.accent
-                                        .withValues(alpha: 0.8),
+                                    color: VaultColors.accent.withValues(
+                                      alpha: 0.8,
+                                    ),
                                     blurRadius: 12,
                                     spreadRadius: 1,
                                   ),
@@ -181,8 +186,13 @@ class _ScanRingPainter extends CustomPainter {
       ..color = color;
     final rect = Offset.zero & size;
     canvas.drawArc(rect.deflate(2), 0, math.pi * 0.6, false, paint);
-    canvas.drawArc(rect.deflate(2), math.pi, math.pi * 0.6, false,
-        paint..color = color.withValues(alpha: 0.35));
+    canvas.drawArc(
+      rect.deflate(2),
+      math.pi,
+      math.pi * 0.6,
+      false,
+      paint..color = color.withValues(alpha: 0.35),
+    );
   }
 
   @override

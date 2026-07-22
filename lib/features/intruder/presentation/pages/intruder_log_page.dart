@@ -38,28 +38,27 @@ class _IntruderLogView extends StatelessWidget {
           return switch (state) {
             IntruderLogLoading() => const LoadingIndicator(),
             IntruderLogError(:final message) => AppErrorView(
-                message: message,
-                onRetry: () => context.read<IntruderLogCubit>().load(),
-              ),
-            IntruderLogLoaded(:final events) when events.isEmpty => const Center(
+              message: message,
+              onRetry: () => context.read<IntruderLogCubit>().load(),
+            ),
+            IntruderLogLoaded(:final events) when events.isEmpty =>
+              const Center(
                 child: Text(
                   'Chưa ghi nhận lần đột nhập nào',
                   style: TextStyle(color: VaultColors.textSub),
                 ),
               ),
             IntruderLogLoaded(:final events) => GridView.builder(
-                padding: const EdgeInsets.all(16),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.8,
-                ),
-                itemCount: events.length,
-                itemBuilder: (context, index) =>
-                    _EventCard(event: events[index]),
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.8,
               ),
+              itemCount: events.length,
+              itemBuilder: (context, index) => _EventCard(event: events[index]),
+            ),
           };
         },
       ),
@@ -85,8 +84,10 @@ class _EventCard extends StatelessWidget {
           else
             const ColoredBox(
               color: VaultColors.card,
-              child: Icon(Icons.no_photography_outlined,
-                  color: VaultColors.textFaint),
+              child: Icon(
+                Icons.no_photography_outlined,
+                color: VaultColors.textFaint,
+              ),
             ),
           Positioned(
             top: 8,
@@ -124,7 +125,10 @@ class _EventCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(
                     'Sai mã · ${event.attemptCount} lần',
-                    style: const TextStyle(fontSize: 10, color: VaultColors.red),
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: VaultColors.red,
+                    ),
                   ),
                 ),
               ],

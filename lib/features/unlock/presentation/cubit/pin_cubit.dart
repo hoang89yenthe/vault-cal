@@ -13,7 +13,7 @@ part 'pin_state.dart';
 /// intruder trigger.
 class PinCubit extends Cubit<PinState> {
   PinCubit(this._credentials, this._session, this._intruder)
-      : super(const PinState());
+    : super(const PinState());
 
   final CredentialsRepository _credentials;
   final VaultSession _session;

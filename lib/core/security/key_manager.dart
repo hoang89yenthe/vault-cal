@@ -43,7 +43,10 @@ class KeyManager {
 
   /// Fails closed if a namespace has a database but the master key is gone —
   /// the data is unrecoverable and we must not silently create a new key.
-  Future<void> assertRecoverable(String namespace, {required bool dbExists}) async {
+  Future<void> assertRecoverable(
+    String namespace, {
+    required bool dbExists,
+  }) async {
     if (dbExists && !await _storage.contains(_masterKeyId(namespace))) {
       throw const CryptoException('Vault key missing — data unrecoverable');
     }

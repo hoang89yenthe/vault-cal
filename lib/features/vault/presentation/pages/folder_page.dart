@@ -57,8 +57,10 @@ class _FolderView extends StatelessWidget {
             actions: [
               if (selecting)
                 IconButton(
-                  icon: const Icon(Icons.delete_outline,
-                      color: VaultColors.red),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: VaultColors.red,
+                  ),
                   onPressed: () => _confirmDelete(context, cubit),
                 ),
             ],
@@ -66,40 +68,41 @@ class _FolderView extends StatelessWidget {
           body: switch (state) {
             FolderLoading() => const LoadingIndicator(),
             FolderError(:final message) => AppErrorView(
-                message: message,
-                onRetry: () => cubit.load(category),
+              message: message,
+              onRetry: () => cubit.load(category),
+            ),
+            FolderLoaded(:final files) when files.isEmpty => Center(
+              child: Text(
+                context.l10n.emptyList,
+                style: const TextStyle(color: VaultColors.textSub),
               ),
-            FolderLoaded(:final files) when files.isEmpty =>
-              Center(child: Text(context.l10n.emptyList,
-                  style: const TextStyle(color: VaultColors.textSub))),
-            FolderLoaded(:final files, :final selectedIds) =>
-              GridView.builder(
-                padding: const EdgeInsets.all(4),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                ),
-                itemCount: files.length,
-                itemBuilder: (context, index) {
-                  final file = files[index];
-                  final selected = selectedIds.contains(file.id);
-                  return _Tile(
-                    file: file,
-                    selected: selected,
-                    selecting: selecting,
-                    onTap: () {
-                      if (selecting) {
-                        cubit.toggleSelect(file.id);
-                      } else {
-                        context.push('${AppRoutes.viewer}/${file.id}');
-                      }
-                    },
-                    onLongPress: () => cubit.toggleSelect(file.id),
-                  );
-                },
+            ),
+            FolderLoaded(:final files, :final selectedIds) => GridView.builder(
+              padding: const EdgeInsets.all(4),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
               ),
+              itemCount: files.length,
+              itemBuilder: (context, index) {
+                final file = files[index];
+                final selected = selectedIds.contains(file.id);
+                return _Tile(
+                  file: file,
+                  selected: selected,
+                  selecting: selecting,
+                  onTap: () {
+                    if (selecting) {
+                      cubit.toggleSelect(file.id);
+                    } else {
+                      context.push('${AppRoutes.viewer}/${file.id}');
+                    }
+                  },
+                  onLongPress: () => cubit.toggleSelect(file.id),
+                );
+              },
+            ),
           },
         );
       },
@@ -111,8 +114,10 @@ class _FolderView extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: VaultColors.card,
-        title: const Text('Xóa tệp?',
-            style: TextStyle(color: VaultColors.text)),
+        title: const Text(
+          'Xóa tệp?',
+          style: TextStyle(color: VaultColors.text),
+        ),
         content: const Text(
           'Các tệp đã chọn sẽ bị xóa vĩnh viễn khỏi kho.',
           style: TextStyle(color: VaultColors.textSub),

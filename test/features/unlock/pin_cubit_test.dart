@@ -31,8 +31,9 @@ void main() {
     credentials = MockCredentialsRepository();
     session = MockVaultSession();
     intruder = SpyIntruderTrigger();
-    when(() => session.activate(isDecoy: any(named: 'isDecoy')))
-        .thenAnswer((_) async {});
+    when(
+      () => session.activate(isDecoy: any(named: 'isDecoy')),
+    ).thenAnswer((_) async {});
   });
 
   PinCubit build() => PinCubit(credentials, session, intruder);
@@ -41,8 +42,9 @@ void main() {
     blocTest<PinCubit, PinState>(
       'real PIN activates real session and emits real result',
       build: () {
-        when(() => credentials.matchPin('2468'))
-            .thenAnswer((_) async => PinMatch.real);
+        when(
+          () => credentials.matchPin('2468'),
+        ).thenAnswer((_) async => PinMatch.real);
         return build();
       },
       act: (cubit) async {
@@ -64,8 +66,9 @@ void main() {
     blocTest<PinCubit, PinState>(
       'decoy PIN activates decoy session and emits decoy result',
       build: () {
-        when(() => credentials.matchPin('1111'))
-            .thenAnswer((_) async => PinMatch.decoy);
+        when(
+          () => credentials.matchPin('1111'),
+        ).thenAnswer((_) async => PinMatch.decoy);
         return build();
       },
       act: (cubit) async {
@@ -87,8 +90,9 @@ void main() {
     blocTest<PinCubit, PinState>(
       'wrong PIN shows error then resets',
       build: () {
-        when(() => credentials.matchPin(any()))
-            .thenAnswer((_) async => PinMatch.none);
+        when(
+          () => credentials.matchPin(any()),
+        ).thenAnswer((_) async => PinMatch.none);
         return build();
       },
       act: (cubit) async {
@@ -107,8 +111,9 @@ void main() {
     );
 
     test('fires intruder trigger on the 3rd wrong attempt', () async {
-      when(() => credentials.matchPin(any()))
-          .thenAnswer((_) async => PinMatch.none);
+      when(
+        () => credentials.matchPin(any()),
+      ).thenAnswer((_) async => PinMatch.none);
       final cubit = build();
       for (var attempt = 0; attempt < 3; attempt++) {
         for (final d in ['9', '9', '9', '9']) {

@@ -94,18 +94,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void consumeSecret() => emit(const CalculatorState());
 
   CalculatorState _withCurrent(String current) => CalculatorState(
-        current: current,
-        subline: state.subline,
-        accumulator: state.accumulator,
-        pendingOp: state.pendingOp,
-      );
+    current: current,
+    subline: state.subline,
+    accumulator: state.accumulator,
+    pendingOp: state.pendingOp,
+  );
 
   double _compute(double a, double b, String op) => switch (op) {
-        '÷' => b == 0 ? double.nan : a / b,
-        '×' => a * b,
-        '−' => a - b,
-        _ => a + b,
-      };
+    '÷' => b == 0 ? double.nan : a / b,
+    '×' => a * b,
+    '−' => a - b,
+    _ => a + b,
+  };
 
   String _format(double value) {
     if (value.isNaN || value.isInfinite) return 'Error';

@@ -36,9 +36,9 @@ class _AddSheetBody extends StatelessWidget {
       listener: (context, state) {
         if (state is ImportDone) Navigator.of(context).pop();
         if (state is ImportFailed) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
           Navigator.of(context).pop();
         }
       },

@@ -80,12 +80,15 @@ class _TopBar extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () => context.read<ThemeCubit>().setMode(
-                isDark ? ThemeMode.light : ThemeMode.dark,
-              ),
+            isDark ? ThemeMode.light : ThemeMode.dark,
+          ),
           child: Container(
             width: 34,
             height: 34,
-            decoration: BoxDecoration(color: colors.fnBg, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: colors.fnBg,
+              shape: BoxShape.circle,
+            ),
             child: Icon(
               isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
               size: 18,
@@ -166,39 +169,39 @@ class _Keypad extends StatelessWidget {
   static const double _gap = 14;
 
   List<List<_KeySpec>> get _rows => [
-        [
-          _KeySpec(_KeyKind.fn, label: 'AC', onTap: (c) => c.clear()),
-          _KeySpec(_KeyKind.fn, label: '%', onTap: (c) => c.percent()),
-          _KeySpec(
-            _KeyKind.fn,
-            icon: Icons.backspace_outlined,
-            onTap: (c) => c.backspace(),
-          ),
-          _KeySpec(_KeyKind.op, label: '÷', onTap: (c) => c.setOperator('÷')),
-        ],
-        [
-          for (final d in ['7', '8', '9'])
-            _KeySpec(_KeyKind.digit, label: d, onTap: (c) => c.inputDigit(d)),
-          _KeySpec(_KeyKind.op, label: '×', onTap: (c) => c.setOperator('×')),
-        ],
-        [
-          for (final d in ['4', '5', '6'])
-            _KeySpec(_KeyKind.digit, label: d, onTap: (c) => c.inputDigit(d)),
-          _KeySpec(_KeyKind.op, label: '−', onTap: (c) => c.setOperator('−')),
-        ],
-        [
-          for (final d in ['1', '2', '3'])
-            _KeySpec(_KeyKind.digit, label: d, onTap: (c) => c.inputDigit(d)),
-          _KeySpec(_KeyKind.op, label: '+', onTap: (c) => c.setOperator('+')),
-        ],
-      ];
+    [
+      _KeySpec(_KeyKind.fn, label: 'AC', onTap: (c) => c.clear()),
+      _KeySpec(_KeyKind.fn, label: '%', onTap: (c) => c.percent()),
+      _KeySpec(
+        _KeyKind.fn,
+        icon: Icons.backspace_outlined,
+        onTap: (c) => c.backspace(),
+      ),
+      _KeySpec(_KeyKind.op, label: '÷', onTap: (c) => c.setOperator('÷')),
+    ],
+    [
+      for (final d in ['7', '8', '9'])
+        _KeySpec(_KeyKind.digit, label: d, onTap: (c) => c.inputDigit(d)),
+      _KeySpec(_KeyKind.op, label: '×', onTap: (c) => c.setOperator('×')),
+    ],
+    [
+      for (final d in ['4', '5', '6'])
+        _KeySpec(_KeyKind.digit, label: d, onTap: (c) => c.inputDigit(d)),
+      _KeySpec(_KeyKind.op, label: '−', onTap: (c) => c.setOperator('−')),
+    ],
+    [
+      for (final d in ['1', '2', '3'])
+        _KeySpec(_KeyKind.digit, label: d, onTap: (c) => c.inputDigit(d)),
+      _KeySpec(_KeyKind.op, label: '+', onTap: (c) => c.setOperator('+')),
+    ],
+  ];
 
   (Color, Color) _colorsFor(_KeyKind kind) => switch (kind) {
-        _KeyKind.fn => (colors.fnBg, colors.fnFg),
-        _KeyKind.digit => (colors.keyBg, colors.keyFg),
-        _KeyKind.op => (colors.opBg, colors.opFg),
-        _KeyKind.eq => (colors.eqBg, colors.eqFg),
-      };
+    _KeyKind.fn => (colors.fnBg, colors.fnFg),
+    _KeyKind.digit => (colors.keyBg, colors.keyFg),
+    _KeyKind.op => (colors.opBg, colors.opFg),
+    _KeyKind.eq => (colors.eqBg, colors.eqFg),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -244,9 +247,15 @@ class _Keypad extends StatelessWidget {
                   width: cell * 2 + _gap,
                 ),
                 key(
-                  _KeySpec(_KeyKind.digit, label: '.', onTap: (c) => c.inputDot()),
+                  _KeySpec(
+                    _KeyKind.digit,
+                    label: '.',
+                    onTap: (c) => c.inputDot(),
+                  ),
                 ),
-                key(_KeySpec(_KeyKind.eq, label: '=', onTap: (c) => c.evaluate())),
+                key(
+                  _KeySpec(_KeyKind.eq, label: '=', onTap: (c) => c.evaluate()),
+                ),
               ],
             ),
           ],

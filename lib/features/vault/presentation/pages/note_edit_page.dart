@@ -15,10 +15,12 @@ class NoteEditPage extends StatefulWidget {
 }
 
 class _NoteEditPageState extends State<NoteEditPage> {
-  late final TextEditingController _title =
-      TextEditingController(text: widget.note?.title ?? '');
-  late final TextEditingController _body =
-      TextEditingController(text: widget.note?.body ?? '');
+  late final TextEditingController _title = TextEditingController(
+    text: widget.note?.title ?? '',
+  );
+  late final TextEditingController _body = TextEditingController(
+    text: widget.note?.body ?? '',
+  );
 
   @override
   void dispose() {
@@ -35,10 +37,10 @@ class _NoteEditPageState extends State<NoteEditPage> {
       return;
     }
     await context.read<NotesCubit>().save(
-          id: widget.note?.id,
-          title: title,
-          body: body,
-        );
+      id: widget.note?.id,
+      title: title,
+      body: body,
+    );
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -50,9 +52,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
         backgroundColor: VaultColors.background,
         foregroundColor: VaultColors.text,
         title: Text(widget.note == null ? 'Ghi chú mới' : 'Sửa ghi chú'),
-        actions: [
-          IconButton(icon: const Icon(Icons.check), onPressed: _save),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.check), onPressed: _save)],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

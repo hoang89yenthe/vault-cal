@@ -43,7 +43,11 @@ class _VaultThumbnailState extends State<VaultThumbnail> {
           Image.memory(bytes, fit: BoxFit.cover),
           if (widget.file.isVideo)
             const Center(
-              child: Icon(Icons.play_circle_fill, size: 34, color: Colors.white),
+              child: Icon(
+                Icons.play_circle_fill,
+                size: 34,
+                color: Colors.white,
+              ),
             ),
         ],
       );

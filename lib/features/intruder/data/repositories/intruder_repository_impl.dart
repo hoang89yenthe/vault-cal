@@ -33,8 +33,9 @@ class IntruderRepositoryImpl implements IntruderRepository {
       String? wrappedDek;
 
       if (photo != null) {
-        final wrapped =
-            await _keyManager.newWrappedDek(VaultSession.realNamespace);
+        final wrapped = await _keyManager.newWrappedDek(
+          VaultSession.realNamespace,
+        );
         relPath = 'intruder/$id.vlt';
         wrappedDek = wrapped.wrapped;
         await FileCrypto.encryptBytes(
@@ -44,7 +45,9 @@ class IntruderRepositoryImpl implements IntruderRepository {
         );
       }
 
-      await handle.db.into(handle.db.intruderEvents).insert(
+      await handle.db
+          .into(handle.db.intruderEvents)
+          .insert(
             IntruderEventsCompanion.insert(
               id: id,
               timestamp: DateTime.now().millisecondsSinceEpoch,
@@ -67,9 +70,9 @@ class IntruderRepositoryImpl implements IntruderRepository {
       VaultSession.realNamespace,
     );
     try {
-      final rows = await (handle.db.select(handle.db.intruderEvents)
-            ..orderBy([(t) => OrderingTerm.desc(t.timestamp)]))
-          .get();
+      final rows = await (handle.db.select(
+        handle.db.intruderEvents,
+      )..orderBy([(t) => OrderingTerm.desc(t.timestamp)])).get();
 
       final events = <IntruderEvent>[];
       for (final row in rows) {

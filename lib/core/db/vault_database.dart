@@ -58,8 +58,10 @@ class VaultDatabase extends _$VaultDatabase {
 
   /// Opens an encrypted SQLCipher database at [path] keyed by [hexKey].
   static VaultDatabase open(String path, String hexKey) {
-    sqlite_open.open
-        .overrideFor(sqlite_open.OperatingSystem.android, openCipherOnAndroid);
+    sqlite_open.open.overrideFor(
+      sqlite_open.OperatingSystem.android,
+      openCipherOnAndroid,
+    );
 
     final executor = NativeDatabase(
       File(path),

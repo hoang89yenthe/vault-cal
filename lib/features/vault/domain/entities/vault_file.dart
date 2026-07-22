@@ -33,6 +33,13 @@ class VaultFile extends Equatable {
   bool get isImage => mime.startsWith('image/');
 
   @override
-  List<Object?> get props =>
-      [id, category, name, mime, sizeBytes, createdAt, hasThumb];
+  List<Object?> get props => [
+    id,
+    category,
+    name,
+    mime,
+    sizeBytes,
+    createdAt,
+    hasThumb,
+  ];
 }

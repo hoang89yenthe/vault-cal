@@ -12,20 +12,14 @@ final class FolderLoading extends FolderState {
 }
 
 final class FolderLoaded extends FolderState {
-  const FolderLoaded({
-    required this.files,
-    this.selectedIds = const {},
-  });
+  const FolderLoaded({required this.files, this.selectedIds = const {}});
 
   final List<VaultFile> files;
   final Set<String> selectedIds;
 
   bool get selecting => selectedIds.isNotEmpty;
 
-  FolderLoaded copyWith({
-    List<VaultFile>? files,
-    Set<String>? selectedIds,
-  }) {
+  FolderLoaded copyWith({List<VaultFile>? files, Set<String>? selectedIds}) {
     return FolderLoaded(
       files: files ?? this.files,
       selectedIds: selectedIds ?? this.selectedIds,

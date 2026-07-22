@@ -49,7 +49,6 @@ Future<void> configureDependencies() async {
     ..registerSingleton<SharedPreferences>(prefs)
     ..registerLazySingleton<LocalStorage>(() => LocalStorage(getIt()))
     ..registerLazySingleton<Dio>(createDio)
-
     // Core: security
     ..registerLazySingleton<SecureStorage>(
       () => const SecureStorage(FlutterSecureStorage()),
@@ -58,7 +57,6 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<PinHasher>(PinHasher.new)
     ..registerLazySingleton<BiometricService>(BiometricService.new)
     ..registerLazySingleton<VaultSession>(() => VaultSession(getIt()))
-
     // Feature: intruder
     ..registerLazySingleton<SelfieCaptureService>(SelfieCaptureService.new)
     ..registerLazySingleton<IntruderRepository>(
@@ -68,17 +66,14 @@ Future<void> configureDependencies() async {
       () => CapturingIntruderTrigger(getIt(), getIt(), getIt(), getIt()),
     )
     ..registerFactory<IntruderLogCubit>(() => IntruderLogCubit(getIt()))
-
     // App
     ..registerLazySingleton<ThemeCubit>(() => ThemeCubit(getIt()))
-
     // Feature: calculator + unlock
     ..registerLazySingleton<CredentialsRepository>(
       () => CredentialsRepositoryImpl(getIt(), getIt()),
     )
     ..registerFactory<CalculatorCubit>(() => CalculatorCubit(getIt()))
     ..registerFactory<PinCubit>(() => PinCubit(getIt(), getIt(), getIt()))
-
     // Feature: vault
     ..registerLazySingleton<MediaRepository>(
       () => MediaRepositoryImpl(getIt(), getIt()),
@@ -91,24 +86,17 @@ Future<void> configureDependencies() async {
     ..registerFactory<FolderCubit>(() => FolderCubit(getIt()))
     ..registerFactory<ImportCubit>(() => ImportCubit(getIt()))
     ..registerFactory<NotesCubit>(() => NotesCubit(getIt()))
-
     // Feature: purchases
-    ..registerLazySingleton<PurchaseService>(
-      () => MockPurchaseService(getIt()),
-    )
-
+    ..registerLazySingleton<PurchaseService>(() => MockPurchaseService(getIt()))
     // Feature: settings
     ..registerLazySingleton<SettingsCubit>(
       () => SettingsCubit(getIt(), getIt()),
     )
-
     // Feature: posts (base-project demo)
     ..registerLazySingleton<PostRemoteDataSource>(
       () => PostRemoteDataSourceImpl(getIt()),
     )
-    ..registerLazySingleton<PostRepository>(
-      () => PostRepositoryImpl(getIt()),
-    )
+    ..registerLazySingleton<PostRepository>(() => PostRepositoryImpl(getIt()))
     ..registerFactory<PostsCubit>(() => PostsCubit(getIt()));
 
   // Seed default credentials on first launch.

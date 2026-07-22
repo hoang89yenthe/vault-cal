@@ -153,8 +153,7 @@ class _SettingsView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   l10n.intruderLog,
@@ -164,8 +163,11 @@ class _SettingsView extends StatelessWidget {
                                     color: VaultColors.textSub,
                                   ),
                                 ),
-                                const Icon(Icons.chevron_right,
-                                    size: 18, color: VaultColors.textFaint),
+                                const Icon(
+                                  Icons.chevron_right,
+                                  size: 18,
+                                  color: VaultColors.textFaint,
+                                ),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -211,8 +213,9 @@ class _SettingsView extends StatelessWidget {
                                     state.disguise == DisguiseIcon.weather,
                                 premiumLocked: !state.premium,
                                 onTap: () {
-                                  if (!cubit
-                                      .trySelectDisguise(DisguiseIcon.weather)) {
+                                  if (!cubit.trySelectDisguise(
+                                    DisguiseIcon.weather,
+                                  )) {
                                     showPaywall(context);
                                   }
                                 },
@@ -224,8 +227,9 @@ class _SettingsView extends StatelessWidget {
                                     state.disguise == DisguiseIcon.compass,
                                 premiumLocked: !state.premium,
                                 onTap: () {
-                                  if (!cubit
-                                      .trySelectDisguise(DisguiseIcon.compass)) {
+                                  if (!cubit.trySelectDisguise(
+                                    DisguiseIcon.compass,
+                                  )) {
                                     showPaywall(context);
                                   }
                                 },
@@ -303,11 +307,7 @@ class _PremiumCta extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right,
-              size: 20,
-              color: VaultColors.gold,
-            ),
+            const Icon(Icons.chevron_right, size: 20, color: VaultColors.gold),
           ],
         ),
       ),
@@ -420,59 +420,59 @@ class _SettingsRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: tone.bg,
-              borderRadius: BorderRadius.circular(10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: tone.bg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 19, color: tone.fg),
             ),
-            child: Icon(icon, size: 19, color: tone.fg),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: VaultColors.text,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: VaultColors.text,
+                          ),
                         ),
                       ),
-                    ),
-                    if (titleBadge != null) ...[
-                      const SizedBox(width: 6),
-                      titleBadge!,
+                      if (titleBadge != null) ...[
+                        const SizedBox(width: 6),
+                        titleBadge!,
+                      ],
                     ],
-                  ],
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle!,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: VaultColors.textSub,
-                    ),
                   ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: VaultColors.textSub,
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          trailing,
-        ],
-      ),
+            trailing,
+          ],
+        ),
       ),
     );
   }
@@ -618,18 +618,11 @@ class _DisguiseOption extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 12,
-                color: VaultColors.textSub,
-              ),
+              style: const TextStyle(fontSize: 12, color: VaultColors.textSub),
             ),
             const SizedBox(height: 4),
             if (selected)
-              const Icon(
-                Icons.check_circle,
-                size: 16,
-                color: VaultColors.green,
-              )
+              const Icon(Icons.check_circle, size: 16, color: VaultColors.green)
             else if (premiumLocked)
               const Icon(
                 Icons.workspace_premium,

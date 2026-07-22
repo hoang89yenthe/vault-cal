@@ -43,7 +43,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.unlock,
-      pageBuilder: (context, state) => _slideFadePage(state, const UnlockPage()),
+      pageBuilder: (context, state) =>
+          _slideFadePage(state, const UnlockPage()),
     ),
     GoRoute(
       path: AppRoutes.pin,
@@ -57,8 +58,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '${AppRoutes.folder}/:category',
       pageBuilder: (context, state) {
-        final category =
-            MediaCategoryX.fromKey(state.pathParameters['category']!);
+        final category = MediaCategoryX.fromKey(
+          state.pathParameters['category']!,
+        );
         final title = state.uri.queryParameters['title'] ?? '';
         return _slideFadePage(
           state,
@@ -75,8 +77,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.notes,
-      pageBuilder: (context, state) =>
-          _slideFadePage(state, const NotesPage()),
+      pageBuilder: (context, state) => _slideFadePage(state, const NotesPage()),
     ),
     GoRoute(
       path: AppRoutes.settings,
@@ -126,8 +127,10 @@ CustomTransitionPage<void> _slideFadePage(GoRouterState state, Widget child) {
       return FadeTransition(
         opacity: fade,
         child: SlideTransition(
-          position: Tween(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(slide),
+          position: Tween(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(slide),
           child: child,
         ),
       );

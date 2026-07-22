@@ -40,9 +40,9 @@ class _PaywallBodyState extends State<_PaywallBody> {
     setState(() => _busy = true);
     await getIt<PurchaseService>().buy(_selected);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã kích hoạt Premium 🎉')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã kích hoạt Premium 🎉')));
     Navigator.of(context).pop();
   }
 
@@ -61,129 +61,129 @@ class _PaywallBodyState extends State<_PaywallBody> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-              Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  color: VaultColors.gold,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: const Icon(
-                  Icons.workspace_premium,
-                  size: 32,
-                  color: Color(0xFF1B1810),
+            Container(
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
+                color: VaultColors.gold,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Icon(
+                Icons.workspace_premium,
+                size: 32,
+                color: Color(0xFF1B1810),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              l10n.premiumTitle,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+                color: VaultColors.text,
+              ),
+            ),
+            const SizedBox(height: 18),
+            for (final feature in [
+              l10n.paywallFeature1,
+              l10n.paywallFeature2,
+              l10n.paywallFeature3,
+              l10n.paywallFeature4,
+            ])
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      size: 18,
+                      color: VaultColors.gold,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        feature,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: VaultColors.text,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 14),
-              Text(
-                l10n.premiumTitle,
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _PlanCard(
+                    title: l10n.planYearTitle,
+                    price: l10n.planYearPrice,
+                    badge: l10n.saveBadge,
+                    highlighted: _selected == PurchasePlan.yearly,
+                    onTap: () =>
+                        setState(() => _selected = PurchasePlan.yearly),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _PlanCard(
+                    title: l10n.planLifetimeTitle,
+                    price: l10n.planLifetimePrice,
+                    highlighted: _selected == PurchasePlan.lifetime,
+                    onTap: () =>
+                        setState(() => _selected = PurchasePlan.lifetime),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: FilledButton(
+                onPressed: _busy ? null : _buy,
+                style: FilledButton.styleFrom(
+                  backgroundColor: VaultColors.gold,
+                  foregroundColor: const Color(0xFF1B1810),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: _busy
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF1B1810),
+                        ),
+                      )
+                    : Text(
+                        l10n.startTrial,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: _busy ? null : _restore,
+              child: Text(
+                l10n.restorePurchase,
                 style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.5,
-                  color: VaultColors.text,
+                  fontSize: 13,
+                  color: VaultColors.textSub,
                 ),
               ),
-              const SizedBox(height: 18),
-              for (final feature in [
-                l10n.paywallFeature1,
-                l10n.paywallFeature2,
-                l10n.paywallFeature3,
-                l10n.paywallFeature4,
-              ])
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.check_circle,
-                        size: 18,
-                        color: VaultColors.gold,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          feature,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: VaultColors.text,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: _PlanCard(
-                      title: l10n.planYearTitle,
-                      price: l10n.planYearPrice,
-                      badge: l10n.saveBadge,
-                      highlighted: _selected == PurchasePlan.yearly,
-                      onTap: () =>
-                          setState(() => _selected = PurchasePlan.yearly),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _PlanCard(
-                      title: l10n.planLifetimeTitle,
-                      price: l10n.planLifetimePrice,
-                      highlighted: _selected == PurchasePlan.lifetime,
-                      onTap: () =>
-                          setState(() => _selected = PurchasePlan.lifetime),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: FilledButton(
-                  onPressed: _busy ? null : _buy,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: VaultColors.gold,
-                    foregroundColor: const Color(0xFF1B1810),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: _busy
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Color(0xFF1B1810),
-                          ),
-                        )
-                      : Text(
-                          l10n.startTrial,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: _busy ? null : _restore,
-                child: Text(
-                  l10n.restorePurchase,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: VaultColors.textSub,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -246,8 +246,7 @@ class _PlanCard extends StatelessWidget {
               top: -9,
               right: 10,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: VaultColors.gold,
                   borderRadius: BorderRadius.circular(8),

@@ -7,7 +7,7 @@ import '../utils/result.dart';
 /// while the existing scan animation plays.
 class BiometricService {
   BiometricService([LocalAuthentication? auth])
-      : _auth = auth ?? LocalAuthentication();
+    : _auth = auth ?? LocalAuthentication();
 
   final LocalAuthentication _auth;
 

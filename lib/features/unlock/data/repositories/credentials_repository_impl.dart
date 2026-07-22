@@ -21,10 +21,10 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
   static const _defaultDecoyPin = '1111';
 
   String _keyFor(CodeType type) => switch (type) {
-        CodeType.secret => _keySecret,
-        CodeType.realPin => _keyRealPin,
-        CodeType.decoyPin => _keyDecoyPin,
-      };
+    CodeType.secret => _keySecret,
+    CodeType.realPin => _keyRealPin,
+    CodeType.decoyPin => _keyDecoyPin,
+  };
 
   @override
   Future<void> ensureSeeded() async {
@@ -49,9 +49,13 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
   @override
   Future<PinMatch> matchPin(String pin) async {
     final real = await _storage.read(_keyRealPin);
-    if (real != null && await _hasher.verify(pin, real)) return PinMatch.real;
+    if (real != null && await _hasher.verify(pin, real)) {
+      return PinMatch.real;
+    }
     final decoy = await _storage.read(_keyDecoyPin);
-    if (decoy != null && await _hasher.verify(pin, decoy)) return PinMatch.decoy;
+    if (decoy != null && await _hasher.verify(pin, decoy)) {
+      return PinMatch.decoy;
+    }
     return PinMatch.none;
   }
 

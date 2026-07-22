@@ -23,7 +23,11 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  Future<void> save({String? id, required String title, required String body}) async {
+  Future<void> save({
+    String? id,
+    required String title,
+    required String body,
+  }) async {
     await _repository.saveNote(id: id, title: title, body: body);
     await load();
   }

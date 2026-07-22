@@ -31,38 +31,39 @@ class _PostsView extends StatelessWidget {
           return switch (state) {
             PostsInitial() || PostsLoading() => const LoadingIndicator(),
             PostsError(:final message) => AppErrorView(
-                message: message,
-                onRetry: () => context.read<PostsCubit>().fetchPosts(),
-              ),
-            PostsLoaded(:final posts) when posts.isEmpty =>
-              Center(child: Text(context.l10n.emptyList)),
+              message: message,
+              onRetry: () => context.read<PostsCubit>().fetchPosts(),
+            ),
+            PostsLoaded(:final posts) when posts.isEmpty => Center(
+              child: Text(context.l10n.emptyList),
+            ),
             PostsLoaded(:final posts) => RefreshIndicator(
-                onRefresh: () => context.read<PostsCubit>().fetchPosts(),
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: posts.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final post = posts[index];
-                    return Card(
-                      margin: EdgeInsets.zero,
-                      child: ListTile(
-                        leading: CircleAvatar(child: Text('${post.id}')),
-                        title: Text(
-                          post.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(
-                          post.body,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+              onRefresh: () => context.read<PostsCubit>().fetchPosts(),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: posts.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+                  return Card(
+                    margin: EdgeInsets.zero,
+                    child: ListTile(
+                      leading: CircleAvatar(child: Text('${post.id}')),
+                      title: Text(
+                        post.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    );
-                  },
-                ),
+                      subtitle: Text(
+                        post.body,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  );
+                },
               ),
+            ),
           };
         },
       ),

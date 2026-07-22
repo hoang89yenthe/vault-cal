@@ -52,8 +52,8 @@ class _DashboardViewState extends State<_DashboardView> {
   Future<void> _openFolder(VaultFolder folder) async {
     final category = switch (folder.icon) {
       VaultFolderIcon.images => MediaCategory.images,
-      VaultFolderIcon.video || VaultFolderIcon.screenshots =>
-        MediaCategory.videos,
+      VaultFolderIcon.video ||
+      VaultFolderIcon.screenshots => MediaCategory.videos,
       VaultFolderIcon.documents => MediaCategory.documents,
       VaultFolderIcon.notes => null,
     };
@@ -93,44 +93,44 @@ class _DashboardViewState extends State<_DashboardView> {
         child: BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, state) {
             return switch (state) {
-              DashboardInitial() || DashboardLoading() =>
-                const LoadingIndicator(),
+              DashboardInitial() ||
+              DashboardLoading() => const LoadingIndicator(),
               DashboardError(:final message) => AppErrorView(
-                  message: message,
-                  onRetry: () => context.read<DashboardCubit>().load(),
-                ),
+                message: message,
+                onRetry: () => context.read<DashboardCubit>().load(),
+              ),
               DashboardLoaded(:final data) => ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 90),
-                  children: [
-                    _Header(isDecoy: _isDecoy),
-                    const SizedBox(height: 20),
-                    StorageCard(
-                      usedLabel: data.usedLabel,
-                      totalLabel: data.totalLabel,
-                      percent: data.percent,
-                    ),
-                    const SizedBox(height: 20),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 14,
-                        mainAxisSpacing: 14,
-                        mainAxisExtent: 136,
-                      ),
-                      itemCount: data.folders.length,
-                      itemBuilder: (context, index) {
-                        final folder = data.folders[index];
-                        return GestureDetector(
-                          onTap: () => _openFolder(folder),
-                          child: FolderCard(folder: folder),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 90),
+                children: [
+                  _Header(isDecoy: _isDecoy),
+                  const SizedBox(height: 20),
+                  StorageCard(
+                    usedLabel: data.usedLabel,
+                    totalLabel: data.totalLabel,
+                    percent: data.percent,
+                  ),
+                  const SizedBox(height: 20),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 14,
+                          mainAxisSpacing: 14,
+                          mainAxisExtent: 136,
+                        ),
+                    itemCount: data.folders.length,
+                    itemBuilder: (context, index) {
+                      final folder = data.folders[index];
+                      return GestureDetector(
+                        onTap: () => _openFolder(folder),
+                        child: FolderCard(folder: folder),
+                      );
+                    },
+                  ),
+                ],
+              ),
             };
           },
         ),

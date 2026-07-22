@@ -10,12 +10,12 @@ class FolderCard extends StatelessWidget {
   final VaultFolder folder;
 
   IconData get _icon => switch (folder.icon) {
-        VaultFolderIcon.images => Icons.image_outlined,
-        VaultFolderIcon.video => Icons.videocam_outlined,
-        VaultFolderIcon.documents => Icons.description_outlined,
-        VaultFolderIcon.notes => Icons.sticky_note_2_outlined,
-        VaultFolderIcon.screenshots => Icons.smartphone_outlined,
-      };
+    VaultFolderIcon.images => Icons.image_outlined,
+    VaultFolderIcon.video => Icons.videocam_outlined,
+    VaultFolderIcon.documents => Icons.description_outlined,
+    VaultFolderIcon.notes => Icons.sticky_note_2_outlined,
+    VaultFolderIcon.screenshots => Icons.smartphone_outlined,
+  };
 
   @override
   Widget build(BuildContext context) {

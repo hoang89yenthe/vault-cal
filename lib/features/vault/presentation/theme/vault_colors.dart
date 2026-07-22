@@ -22,10 +22,10 @@ abstract final class VaultColors {
 /// Folder icon tile colors — hex approximations of the handoff's
 /// oklch(0.33 0.07 H) background / oklch(0.76 0.15 H) foreground per hue.
 ({Color bg, Color fg}) folderTone(int hue) => switch (hue) {
-      255 => (bg: const Color(0xFF212C4E), fg: const Color(0xFF8FB0FF)),
-      25 => (bg: const Color(0xFF46241B), fg: const Color(0xFFFF9E8A)),
-      150 => (bg: const Color(0xFF143526), fg: const Color(0xFF4ED39B)),
-      305 => (bg: const Color(0xFF3B2148), fg: const Color(0xFFDB9BF2)),
-      200 => (bg: const Color(0xFF0F3542), fg: const Color(0xFF55C6E8)),
-      _ => (bg: const Color(0xFF3C2E12), fg: const Color(0xFFE3B45C)),
-    };
+  255 => (bg: const Color(0xFF212C4E), fg: const Color(0xFF8FB0FF)),
+  25 => (bg: const Color(0xFF46241B), fg: const Color(0xFFFF9E8A)),
+  150 => (bg: const Color(0xFF143526), fg: const Color(0xFF4ED39B)),
+  305 => (bg: const Color(0xFF3B2148), fg: const Color(0xFFDB9BF2)),
+  200 => (bg: const Color(0xFF0F3542), fg: const Color(0xFF55C6E8)),
+  _ => (bg: const Color(0xFF3C2E12), fg: const Color(0xFFE3B45C)),
+};

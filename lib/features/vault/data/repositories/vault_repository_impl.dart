@@ -28,8 +28,9 @@ class VaultRepositoryImpl implements VaultRepository {
       final documents = stats.counts[MediaCategory.documents] ?? 0;
       final notes = await _noteCount();
 
-      final percent =
-          ((stats.totalBytes / _capBytes) * 100).clamp(0, 100).round();
+      final percent = ((stats.totalBytes / _capBytes) * 100)
+          .clamp(0, 100)
+          .round();
 
       return Ok(
         VaultData(
@@ -48,7 +49,9 @@ class VaultRepositoryImpl implements VaultRepository {
               name: isDecoy ? 'Ảnh màn hình' : 'Video',
               count: videos,
               hue: isDecoy ? 200 : 25,
-              icon: isDecoy ? VaultFolderIcon.screenshots : VaultFolderIcon.video,
+              icon: isDecoy
+                  ? VaultFolderIcon.screenshots
+                  : VaultFolderIcon.video,
             ),
             VaultFolder(
               name: isDecoy ? 'Tài liệu công việc' : 'Tài liệu',

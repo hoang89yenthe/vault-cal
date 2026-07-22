@@ -43,22 +43,21 @@ class _NotesView extends StatelessWidget {
           return switch (state) {
             NotesLoading() => const LoadingIndicator(),
             NotesError(:final message) => AppErrorView(
-                message: message,
-                onRetry: () => context.read<NotesCubit>().load(),
-              ),
+              message: message,
+              onRetry: () => context.read<NotesCubit>().load(),
+            ),
             NotesLoaded(:final notes) when notes.isEmpty => const Center(
-                child: Text(
-                  'Chưa có ghi chú nào',
-                  style: TextStyle(color: VaultColors.textSub),
-                ),
+              child: Text(
+                'Chưa có ghi chú nào',
+                style: TextStyle(color: VaultColors.textSub),
               ),
+            ),
             NotesLoaded(:final notes) => ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: notes.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 10),
-                itemBuilder: (context, index) =>
-                    _NoteCard(note: notes[index]),
-              ),
+              padding: const EdgeInsets.all(16),
+              itemCount: notes.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (context, index) => _NoteCard(note: notes[index]),
+            ),
           };
         },
       ),

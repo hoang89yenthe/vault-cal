@@ -88,7 +88,10 @@ class _PinViewState extends State<_PinView>
               const SizedBox(height: 6),
               Text(
                 l10n.pinSubtitle,
-                style: const TextStyle(fontSize: 14, color: VaultColors.textSub),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: VaultColors.textSub,
+                ),
               ),
               const SizedBox(height: 30),
               AnimatedBuilder(
@@ -96,7 +99,10 @@ class _PinViewState extends State<_PinView>
                 builder: (context, child) {
                   final t = _shake.value;
                   final dx = math.sin(t * math.pi * 6) * 8 * (1 - t);
-                  return Transform.translate(offset: Offset(dx, 0), child: child);
+                  return Transform.translate(
+                    offset: Offset(dx, 0),
+                    child: child,
+                  );
                 },
                 child: const _PinDots(),
               ),
@@ -125,8 +131,8 @@ class _PinDots extends StatelessWidget {
             final color = state.error
                 ? VaultColors.red
                 : filled
-                    ? VaultColors.accentLight
-                    : Colors.transparent;
+                ? VaultColors.accentLight
+                : Colors.transparent;
             return Container(
               width: 14,
               height: 14,
@@ -138,8 +144,8 @@ class _PinDots extends StatelessWidget {
                   color: state.error
                       ? VaultColors.red
                       : filled
-                          ? VaultColors.accentLight
-                          : VaultColors.textFaint,
+                      ? VaultColors.accentLight
+                      : VaultColors.textFaint,
                   width: 1.5,
                 ),
               ),
