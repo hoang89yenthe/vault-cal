@@ -52,6 +52,15 @@ class _PaywallBodyState extends State<_PaywallBody> {
     if (mounted) setState(() => _busy = false);
   }
 
+  /// Store price for [plan] when the real IAP has loaded it, else the built-in
+  /// fallback string.
+  String _priceFor(PurchasePlan plan, String fallback) {
+    for (final p in getIt<PurchaseService>().prices) {
+      if (p.plan == plan) return p.price;
+    }
+    return fallback;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
@@ -119,7 +128,7 @@ class _PaywallBodyState extends State<_PaywallBody> {
                 Expanded(
                   child: _PlanCard(
                     title: l10n.planYearTitle,
-                    price: l10n.planYearPrice,
+                    price: _priceFor(PurchasePlan.yearly, l10n.planYearPrice),
                     badge: l10n.saveBadge,
                     highlighted: _selected == PurchasePlan.yearly,
                     onTap: () =>
@@ -130,7 +139,10 @@ class _PaywallBodyState extends State<_PaywallBody> {
                 Expanded(
                   child: _PlanCard(
                     title: l10n.planLifetimeTitle,
-                    price: l10n.planLifetimePrice,
+                    price: _priceFor(
+                      PurchasePlan.lifetime,
+                      l10n.planLifetimePrice,
+                    ),
                     highlighted: _selected == PurchasePlan.lifetime,
                     onTap: () =>
                         setState(() => _selected = PurchasePlan.lifetime),

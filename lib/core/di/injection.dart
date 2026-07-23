@@ -15,6 +15,7 @@ import '../../features/intruder/data/services/selfie_capture_service.dart';
 import '../../features/intruder/domain/intruder_trigger.dart';
 import '../../features/intruder/domain/repositories/intruder_repository.dart';
 import '../../features/intruder/presentation/cubit/intruder_log_cubit.dart';
+import '../../features/purchases/data/in_app_purchase_service.dart';
 import '../../features/purchases/data/mock_purchase_service.dart';
 import '../../features/purchases/domain/purchase_service.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
@@ -90,8 +91,14 @@ Future<void> configureDependencies() async {
     ..registerFactory<FolderCubit>(() => FolderCubit(getIt()))
     ..registerFactory<ImportCubit>(() => ImportCubit(getIt()))
     ..registerFactory<NotesCubit>(() => NotesCubit(getIt()))
-    // Feature: purchases
-    ..registerLazySingleton<PurchaseService>(() => MockPurchaseService(getIt()))
+    // Feature: purchases. Real StoreKit/Play Billing is used when built with
+    // --dart-define=REAL_IAP=true (needs products configured on the stores);
+    // otherwise the mock keeps the dev/demo flow working.
+    ..registerLazySingleton<PurchaseService>(
+      () => const bool.fromEnvironment('REAL_IAP')
+          ? InAppPurchaseService(getIt())
+          : MockPurchaseService(getIt()),
+    )
     // Feature: settings
     ..registerLazySingleton<SettingsCubit>(
       () => SettingsCubit(getIt(), getIt(), getIt()),
