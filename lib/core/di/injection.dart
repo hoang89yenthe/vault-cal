@@ -98,7 +98,4 @@ Future<void> configureDependencies() async {
     )
     ..registerLazySingleton<PostRepository>(() => PostRepositoryImpl(getIt()))
     ..registerFactory<PostsCubit>(() => PostsCubit(getIt()));
-
-  // Seed default credentials on first launch.
-  await getIt<CredentialsRepository>().ensureSeeded();
 }

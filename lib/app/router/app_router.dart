@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/session/credentials_gate.dart';
 import '../../features/calculator/presentation/pages/calculator_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/posts/presentation/pages/posts_page.dart';
 import '../../features/intruder/presentation/pages/intruder_log_page.dart';
 import '../../features/settings/presentation/pages/change_code_page.dart';
@@ -17,6 +19,7 @@ import '../../features/vault/presentation/pages/media_viewer_page.dart';
 import '../../features/vault/presentation/pages/notes_page.dart';
 
 abstract final class AppRoutes {
+  static const String onboarding = '/onboarding';
   static const String calculator = '/';
   static const String unlock = '/unlock';
   static const String pin = '/pin';
@@ -35,7 +38,20 @@ abstract final class AppRoutes {
 
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.calculator,
+  refreshListenable: credentialsInitialized,
+  redirect: (context, state) {
+    final ready = credentialsInitialized.value;
+    final atOnboarding = state.matchedLocation == AppRoutes.onboarding;
+    // Force first-run setup before anything else; never show onboarding again.
+    if (!ready && !atOnboarding) return AppRoutes.onboarding;
+    if (ready && atOnboarding) return AppRoutes.calculator;
+    return null;
+  },
   routes: [
+    GoRoute(
+      path: AppRoutes.onboarding,
+      pageBuilder: (context, state) => _page(state, const OnboardingPage()),
+    ),
     GoRoute(
       path: AppRoutes.calculator,
       pageBuilder: (context, state) => _page(state, const CalculatorPage()),
