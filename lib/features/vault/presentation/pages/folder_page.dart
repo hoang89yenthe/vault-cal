@@ -85,21 +85,24 @@ class _FolderView extends StatelessWidget {
                 mainAxisSpacing: 4,
               ),
               itemCount: files.length,
+              addRepaintBoundaries: true,
               itemBuilder: (context, index) {
                 final file = files[index];
                 final selected = selectedIds.contains(file.id);
-                return _Tile(
-                  file: file,
-                  selected: selected,
-                  selecting: selecting,
-                  onTap: () {
-                    if (selecting) {
-                      cubit.toggleSelect(file.id);
-                    } else {
-                      context.push('${AppRoutes.viewer}/${file.id}');
-                    }
-                  },
-                  onLongPress: () => cubit.toggleSelect(file.id),
+                return RepaintBoundary(
+                  child: _Tile(
+                    file: file,
+                    selected: selected,
+                    selecting: selecting,
+                    onTap: () {
+                      if (selecting) {
+                        cubit.toggleSelect(file.id);
+                      } else {
+                        context.push('${AppRoutes.viewer}/${file.id}');
+                      }
+                    },
+                    onLongPress: () => cubit.toggleSelect(file.id),
+                  ),
                 );
               },
             ),

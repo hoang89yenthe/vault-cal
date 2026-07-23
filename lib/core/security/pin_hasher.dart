@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -32,21 +33,24 @@ class PinHasher {
     return _constantTimeEquals(derived, expected);
   }
 
-  Future<Uint8List> _derive(
-    String code,
-    List<int> salt, {
-    int? iterations,
-  }) async {
-    final algorithm = Pbkdf2(
-      macAlgorithm: Hmac.sha256(),
-      iterations: iterations ?? _iterations,
-      bits: _hashLength * 8,
-    );
-    final key = await algorithm.deriveKey(
-      secretKey: SecretKey(utf8.encode(code)),
-      nonce: salt,
-    );
-    return Uint8List.fromList(await key.extractBytes());
+  /// Runs the (CPU-heavy) key derivation in a background isolate so the UI
+  /// thread never blocks while unlocking or checking a PIN.
+  Future<Uint8List> _derive(String code, List<int> salt, {int? iterations}) {
+    final iters = iterations ?? _iterations;
+    final saltCopy = Uint8List.fromList(salt);
+    const bits = _hashLength * 8;
+    return Isolate.run(() async {
+      final algorithm = Pbkdf2(
+        macAlgorithm: Hmac.sha256(),
+        iterations: iters,
+        bits: bits,
+      );
+      final key = await algorithm.deriveKey(
+        secretKey: SecretKey(utf8.encode(code)),
+        nonce: saltCopy,
+      );
+      return Uint8List.fromList(await key.extractBytes());
+    });
   }
 
   Uint8List _randomBytes(int length) {

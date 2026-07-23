@@ -107,31 +107,56 @@ final GoRouter appRouter = GoRouter(
   ],
 );
 
-/// Slide + fade screen transition from the handoff:
-/// 500ms transform / 400ms opacity, cubic-bezier(.4,0,.2,1).
+/// iOS-style push transition: the incoming page slides in opaque from the
+/// right while the outgoing page parallaxes left and dims for depth. The
+/// incoming page never goes translucent, so light and dark screens never
+/// bleed through each other.
 CustomTransitionPage<void> _slideFadePage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 500),
-    reverseTransitionDuration: const Duration(milliseconds: 500),
+    transitionDuration: const Duration(milliseconds: 380),
+    reverseTransitionDuration: const Duration(milliseconds: 320),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final slide = CurvedAnimation(
+      final enter = CurvedAnimation(
         parent: animation,
-        curve: Curves.fastOutSlowIn,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
       );
-      final fade = CurvedAnimation(
-        parent: animation,
-        curve: const Interval(0, 0.8, curve: Curves.easeOut),
+      final leave = CurvedAnimation(
+        parent: secondaryAnimation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
       );
-      return FadeTransition(
-        opacity: fade,
+
+      final slideIn = Tween<Offset>(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(enter);
+      final parallax = Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(-0.22, 0),
+      ).animate(leave);
+      final dim = Tween<double>(begin: 0, end: 0.32).animate(leave);
+
+      return SlideTransition(
+        position: parallax,
         child: SlideTransition(
-          position: Tween(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(slide),
-          child: child,
+          position: slideIn,
+          child: Stack(
+            fit: StackFit.passthrough,
+            children: [
+              child,
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: FadeTransition(
+                    opacity: dim,
+                    child: const ColoredBox(color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     },
