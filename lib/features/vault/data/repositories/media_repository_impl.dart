@@ -23,6 +23,12 @@ class MediaRepositoryImpl implements MediaRepository {
   final KeyManager _keyManager;
   final _uuid = const Uuid();
 
+  // Decrypted-thumbnail cache (keyed by namespace:id) so scrolling and
+  // re-entering a folder never re-runs isolate decryption. Thumbnails are
+  // ~20 KB, so a couple hundred entries stay well within memory.
+  static final Map<String, Uint8List> _thumbCache = {};
+  static const int _thumbCacheMax = 256;
+
   VaultDatabase get _db => _session.db;
   String get _ns => _session.namespace;
 
@@ -137,6 +143,7 @@ class MediaRepositoryImpl implements MediaRepository {
       for (final id in ids) {
         _safeDelete(_session.mediaPath('$id.vlt'));
         _safeDelete(_session.thumbPath('$id.vlt'));
+        _thumbCache.remove('$_ns:$id');
       }
       await (_db.delete(_db.vaultFiles)..where((t) => t.id.isIn(ids))).go();
       return const Ok(null);
@@ -147,12 +154,20 @@ class MediaRepositoryImpl implements MediaRepository {
 
   @override
   Future<Uint8List?> thumbnailBytes(String id) async {
+    final cacheKey = '$_ns:$id';
+    final cached = _thumbCache[cacheKey];
+    if (cached != null) return cached;
     try {
       final path = _session.thumbPath('$id.vlt');
       if (!File(path).existsSync()) return null;
       final dek = await _dekFor(id);
       if (dek == null) return null;
-      return await FileCrypto.decryptToBytes(sourcePath: path, dek: dek);
+      final bytes = await FileCrypto.decryptToBytes(sourcePath: path, dek: dek);
+      if (_thumbCache.length >= _thumbCacheMax) {
+        _thumbCache.remove(_thumbCache.keys.first);
+      }
+      _thumbCache[cacheKey] = bytes;
+      return bytes;
     } on Object {
       return null;
     }
