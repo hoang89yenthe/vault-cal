@@ -64,4 +64,31 @@ void main() {
       throwsA(anything),
     );
   });
+
+  test('detects silent tail truncation of a multi-chunk file', () async {
+    final data = randomBytes(4 * 1024 * 1024 + 5000); // 2 chunks
+    final src = File('${tmp.path}/big.bin')..writeAsBytesSync(data);
+    final enc = File('${tmp.path}/big.vlt');
+    await FileCrypto.encryptFile(
+      sourcePath: src.path,
+      destPath: enc.path,
+      dek: dek,
+    );
+
+    // Drop the trailing chunk (keep header + first chunk) to simulate an
+    // attacker removing an incriminating tail.
+    final bytes = enc.readAsBytesSync();
+    final firstLen = ByteData.sublistView(
+      bytes,
+      17,
+      21,
+    ).getUint32(0, Endian.little);
+    final truncated = bytes.sublist(0, 17 + 4 + firstLen);
+    enc.writeAsBytesSync(truncated);
+
+    expect(
+      () => FileCrypto.decryptToBytes(sourcePath: enc.path, dek: dek),
+      throwsA(anything),
+    );
+  });
 }

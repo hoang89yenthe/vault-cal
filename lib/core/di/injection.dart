@@ -34,6 +34,7 @@ import '../../features/vault/presentation/cubit/notes_cubit.dart';
 import '../network/dio_client.dart';
 import '../security/biometric_service.dart';
 import '../security/key_manager.dart';
+import '../security/lockout_service.dart';
 import '../security/pin_hasher.dart';
 import '../session/vault_session.dart';
 import '../storage/local_storage.dart';
@@ -56,6 +57,7 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<KeyManager>(() => KeyManager(getIt()))
     ..registerLazySingleton<PinHasher>(PinHasher.new)
     ..registerLazySingleton<BiometricService>(BiometricService.new)
+    ..registerLazySingleton<LockoutService>(() => LockoutService(getIt()))
     ..registerLazySingleton<VaultSession>(() => VaultSession(getIt()))
     // Feature: intruder
     ..registerLazySingleton<SelfieCaptureService>(SelfieCaptureService.new)
@@ -73,7 +75,9 @@ Future<void> configureDependencies() async {
       () => CredentialsRepositoryImpl(getIt(), getIt()),
     )
     ..registerFactory<CalculatorCubit>(() => CalculatorCubit(getIt()))
-    ..registerFactory<PinCubit>(() => PinCubit(getIt(), getIt(), getIt()))
+    ..registerFactory<PinCubit>(
+      () => PinCubit(getIt(), getIt(), getIt(), getIt()),
+    )
     // Feature: vault
     ..registerLazySingleton<MediaRepository>(
       () => MediaRepositoryImpl(getIt(), getIt()),

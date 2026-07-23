@@ -65,12 +65,16 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
 
   @override
   Future<PinMatch> matchPin(String pin) async {
+    // Constant work: always verify against BOTH hashes before deciding, so the
+    // time to open the real vault is indistinguishable from opening the decoy —
+    // otherwise a coercer timing the unlock could tell a duress open from a
+    // real one and keep pressing.
     final real = await _storage.read(_keyRealPin);
-    if (real != null && await _hasher.verify(pin, real)) return PinMatch.real;
     final decoy = await _storage.read(_keyDecoyPin);
-    if (decoy != null && await _hasher.verify(pin, decoy)) {
-      return PinMatch.decoy;
-    }
+    final realMatch = real != null && await _hasher.verify(pin, real);
+    final decoyMatch = decoy != null && await _hasher.verify(pin, decoy);
+    if (realMatch) return PinMatch.real;
+    if (decoyMatch) return PinMatch.decoy;
     return PinMatch.none;
   }
 

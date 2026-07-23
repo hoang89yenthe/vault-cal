@@ -37,6 +37,12 @@ class _PinViewState extends State<_PinView>
   );
 
   @override
+  void initState() {
+    super.initState();
+    context.read<PinCubit>().checkLock();
+  }
+
+  @override
   void dispose() {
     _shake.dispose();
     super.dispose();
@@ -86,11 +92,20 @@ class _PinViewState extends State<_PinView>
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                l10n.pinSubtitle,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: VaultColors.textSub,
+              BlocBuilder<PinCubit, PinState>(
+                buildWhen: (a, b) => a.lockMessage != b.lockMessage,
+                builder: (context, state) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    state.lockMessage ?? l10n.pinSubtitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: state.locked
+                          ? VaultColors.red
+                          : VaultColors.textSub,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
