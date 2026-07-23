@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../core/di/injection.dart';
 import '../core/session/vault_session.dart';
+import '../features/vault/data/repositories/media_repository_impl.dart';
 import '../l10n/gen/app_localizations.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
@@ -31,13 +34,16 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Lock the vault the moment the app leaves the foreground: close the
-    // encrypted DB and force the calculator disguise on return.
-    if (state == AppLifecycleState.paused) {
+    // encrypted DB, purge decrypted plaintext, and force the calculator
+    // disguise on return.
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
       final session = getIt<VaultSession>();
       if (session.isActive) {
         session.lock();
         appRouter.go(AppRoutes.calculator);
       }
+      unawaited(MediaRepositoryImpl.clearDecryptedArtifacts());
     }
   }
 

@@ -227,6 +227,14 @@ class MediaRepositoryImpl implements MediaRepository {
     return (counts: counts, totalBytes: total);
   }
 
+  /// Purges every decrypted-plaintext artifact: in-memory thumbnails and the
+  /// on-disk decrypt temp directory. Call on lock / app background so nothing
+  /// survives outside an active session.
+  static Future<void> clearDecryptedArtifacts() async {
+    _thumbCache.clear();
+    await sweepDecryptCache();
+  }
+
   /// Cleans up any decrypted temp files left from a previous session.
   static Future<void> sweepDecryptCache() async {
     try {

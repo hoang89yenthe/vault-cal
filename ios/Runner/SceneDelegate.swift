@@ -3,6 +3,25 @@ import UIKit
 
 class SceneDelegate: FlutterSceneDelegate {
 
+  // Opaque cover shown while the app is not active so vault content never
+  // appears in the app-switcher snapshot.
+  private var privacyCover: UIView?
+
+  override func sceneWillResignActive(_ scene: UIScene) {
+    guard let window = window else { return }
+    let cover = UIView(frame: window.bounds)
+    cover.backgroundColor = UIColor(
+      red: 0.05, green: 0.05, blue: 0.06, alpha: 1.0)
+    cover.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    window.addSubview(cover)
+    privacyCover = cover
+  }
+
+  override func sceneDidBecomeActive(_ scene: UIScene) {
+    privacyCover?.removeFromSuperview()
+    privacyCover = nil
+  }
+
   override func scene(
     _ scene: UIScene,
     willConnectTo session: UISceneSession,

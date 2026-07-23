@@ -9,11 +9,13 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/extensions/context_extension.dart';
 import '../../../../core/security/biometric_service.dart';
 import '../../../../core/storage/local_storage.dart';
+import '../../../../core/utils/result.dart';
 import '../../../vault/presentation/theme/vault_colors.dart';
 
-/// Layer 1 — biometric authentication. The rotating ring + scan line play as
-/// the visual layer while a real `local_auth` prompt runs. When biometrics are
-/// unavailable or disabled, the flow forwards straight to the PIN.
+/// Layer 1 — biometric authentication. When biometrics are enabled and
+/// available they are a REAL gate: the flow only advances to the PIN after a
+/// successful scan (retry on failure). If biometrics are unavailable or the
+/// user disabled them, this layer is skipped and the PIN is the sole factor.
 class UnlockPage extends StatefulWidget {
   const UnlockPage({super.key});
 
@@ -35,6 +37,7 @@ class _UnlockPageState extends State<UnlockPage> with TickerProviderStateMixin {
   )..repeat(reverse: true);
 
   bool _done = false;
+  bool _failed = false;
 
   @override
   void initState() {
@@ -43,13 +46,24 @@ class _UnlockPageState extends State<UnlockPage> with TickerProviderStateMixin {
   }
 
   Future<void> _startAuth() async {
+    setState(() => _failed = false);
+    if (!_ring.isAnimating) _ring.repeat();
+    if (!_scan.isAnimating) _scan.repeat(reverse: true);
+
     final enabled = getIt<LocalStorage>().getBool(_fingerprintKey) ?? true;
     final biometrics = getIt<BiometricService>();
 
     if (enabled && await biometrics.isAvailable) {
-      await biometrics.authenticate('Xác thực để mở kho');
-      // The PIN is the real gate, so proceed regardless of the biometric
-      // outcome — this layer is defence-in-depth, not the sole check.
+      final result = await biometrics.authenticate('Xác thực để mở kho');
+      final ok = result is Ok<bool> && result.value;
+      if (!ok) {
+        // Real gate: do not advance to the PIN on a failed / cancelled scan.
+        if (!mounted) return;
+        _ring.stop();
+        _scan.stop();
+        setState(() => _failed = true);
+        return;
+      }
     }
 
     if (!mounted) return;
@@ -157,13 +171,36 @@ class _UnlockPageState extends State<UnlockPage> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 36),
               Text(
-                _done ? l10n.authenticated : l10n.scanningFingerprint,
+                _failed
+                    ? 'Xác thực thất bại'
+                    : _done
+                    ? l10n.authenticated
+                    : l10n.scanningFingerprint,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: _done ? VaultColors.green : VaultColors.textSub,
+                  color: _failed
+                      ? VaultColors.red
+                      : _done
+                      ? VaultColors.green
+                      : VaultColors.textSub,
                 ),
               ),
+              if (_failed) ...[
+                const SizedBox(height: 20),
+                FilledButton(
+                  onPressed: _startAuth,
+                  child: const Text('Thử lại'),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => context.go(AppRoutes.calculator),
+                  child: const Text(
+                    'Huỷ',
+                    style: TextStyle(color: VaultColors.textSub),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

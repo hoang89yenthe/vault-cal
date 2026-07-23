@@ -2,6 +2,8 @@ package com.vault.hdhsolution.vault_cal
 
 import android.content.ComponentName
 import android.content.pm.PackageManager
+import android.os.Bundle
+import android.view.WindowManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -14,6 +16,16 @@ class MainActivity : FlutterActivity() {
         "weather" to ".LauncherWeather",
         "compass" to ".LauncherCompass"
     )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Block screenshots, screen recording, and app-switcher snapshots of
+        // any vault content (also blanks the thumbnail in Recents).
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
+        super.onCreate(savedInstanceState)
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

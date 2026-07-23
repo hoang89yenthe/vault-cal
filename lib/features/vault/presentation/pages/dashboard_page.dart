@@ -8,6 +8,7 @@ import '../../../../core/extensions/context_extension.dart';
 import '../../../../core/session/vault_session.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/loading_indicator.dart';
+import '../../data/repositories/media_repository_impl.dart';
 import '../../domain/entities/vault_data.dart';
 import '../../domain/entities/vault_file.dart';
 import '../cubit/dashboard_cubit.dart';
@@ -206,6 +207,7 @@ class _Header extends StatelessWidget {
         GestureDetector(
           onTap: () {
             getIt<VaultSession>().lock();
+            MediaRepositoryImpl.clearDecryptedArtifacts();
             context.go(AppRoutes.calculator);
           },
           child: Container(
