@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/calculator/presentation/pages/calculator_page.dart';
@@ -38,22 +38,19 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.calculator,
-      pageBuilder: (context, state) =>
-          _slideFadePage(state, const CalculatorPage()),
+      pageBuilder: (context, state) => _page(state, const CalculatorPage()),
     ),
     GoRoute(
       path: AppRoutes.unlock,
-      pageBuilder: (context, state) =>
-          _slideFadePage(state, const UnlockPage()),
+      pageBuilder: (context, state) => _page(state, const UnlockPage()),
     ),
     GoRoute(
       path: AppRoutes.pin,
-      pageBuilder: (context, state) => _slideFadePage(state, const PinPage()),
+      pageBuilder: (context, state) => _page(state, const PinPage()),
     ),
     GoRoute(
       path: AppRoutes.vault,
-      pageBuilder: (context, state) =>
-          _slideFadePage(state, const DashboardPage()),
+      pageBuilder: (context, state) => _page(state, const DashboardPage()),
     ),
     GoRoute(
       path: '${AppRoutes.folder}/:category',
@@ -62,39 +59,32 @@ final GoRouter appRouter = GoRouter(
           state.pathParameters['category']!,
         );
         final title = state.uri.queryParameters['title'] ?? '';
-        return _slideFadePage(
-          state,
-          FolderPage(category: category, title: title),
-        );
+        return _page(state, FolderPage(category: category, title: title));
       },
     ),
     GoRoute(
       path: '${AppRoutes.viewer}/:id',
-      pageBuilder: (context, state) => _slideFadePage(
-        state,
-        MediaViewerPage(fileId: state.pathParameters['id']!),
-      ),
+      pageBuilder: (context, state) =>
+          _page(state, MediaViewerPage(fileId: state.pathParameters['id']!)),
     ),
     GoRoute(
       path: AppRoutes.notes,
-      pageBuilder: (context, state) => _slideFadePage(state, const NotesPage()),
+      pageBuilder: (context, state) => _page(state, const NotesPage()),
     ),
     GoRoute(
       path: AppRoutes.settings,
-      pageBuilder: (context, state) =>
-          _slideFadePage(state, const SettingsPage()),
+      pageBuilder: (context, state) => _page(state, const SettingsPage()),
     ),
     GoRoute(
       path: '${AppRoutes.changeCode}/:type',
       pageBuilder: (context, state) {
         final type = CodeType.values.byName(state.pathParameters['type']!);
-        return _slideFadePage(state, ChangeCodePage(type: type));
+        return _page(state, ChangeCodePage(type: type));
       },
     ),
     GoRoute(
       path: AppRoutes.intruderLog,
-      pageBuilder: (context, state) =>
-          _slideFadePage(state, const IntruderLogPage()),
+      pageBuilder: (context, state) => _page(state, const IntruderLogPage()),
     ),
     GoRoute(
       path: AppRoutes.demo,
@@ -107,58 +97,11 @@ final GoRouter appRouter = GoRouter(
   ],
 );
 
-/// iOS-style push transition: the incoming page slides in opaque from the
-/// right while the outgoing page parallaxes left and dims for depth. The
-/// incoming page never goes translucent, so light and dark screens never
-/// bleed through each other.
-CustomTransitionPage<void> _slideFadePage(GoRouterState state, Widget child) {
-  return CustomTransitionPage<void>(
-    key: state.pageKey,
-    child: child,
-    transitionDuration: const Duration(milliseconds: 380),
-    reverseTransitionDuration: const Duration(milliseconds: 320),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final enter = CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOutCubic,
-        reverseCurve: Curves.easeInCubic,
-      );
-      final leave = CurvedAnimation(
-        parent: secondaryAnimation,
-        curve: Curves.easeOutCubic,
-        reverseCurve: Curves.easeInCubic,
-      );
-
-      final slideIn = Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: Offset.zero,
-      ).animate(enter);
-      final parallax = Tween<Offset>(
-        begin: Offset.zero,
-        end: const Offset(-0.22, 0),
-      ).animate(leave);
-      final dim = Tween<double>(begin: 0, end: 0.32).animate(leave);
-
-      return SlideTransition(
-        position: parallax,
-        child: SlideTransition(
-          position: slideIn,
-          child: Stack(
-            fit: StackFit.passthrough,
-            children: [
-              child,
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: FadeTransition(
-                    opacity: dim,
-                    child: const ColoredBox(color: Colors.black),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
+/// iOS-style page: the native push transition (incoming slides in opaque,
+/// outgoing parallaxes + dims) PLUS the interactive swipe-from-left-edge back
+/// gesture. Screens reached via `go()` (calculator → unlock → PIN → vault)
+/// replace the stack, so they have no back target; pushed screens (settings,
+/// folders, viewer, notes, …) get swipe-back for free.
+Page<void> _page(GoRouterState state, Widget child) {
+  return CupertinoPage<void>(key: state.pageKey, child: child);
 }

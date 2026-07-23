@@ -59,6 +59,7 @@ void main() {
         PinState(input: '2'),
         PinState(input: '24'),
         PinState(input: '246'),
+        PinState(input: '2468'),
         PinState(input: '2468', result: PinResult.real),
       ],
     );
@@ -83,6 +84,7 @@ void main() {
         PinState(input: '1'),
         PinState(input: '11'),
         PinState(input: '111'),
+        PinState(input: '1111'),
         PinState(input: '1111', result: PinResult.decoy),
       ],
     );
@@ -105,6 +107,7 @@ void main() {
         PinState(input: '9'),
         PinState(input: '99'),
         PinState(input: '999'),
+        PinState(input: '9999'),
         PinState(input: '9999', error: true),
         PinState(),
       ],
