@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../app/router/app_router.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/extensions/context_extension.dart';
+import '../../../../core/utils/result.dart';
+import '../../../intruder/domain/entities/intruder_event.dart';
+import '../../../intruder/domain/repositories/intruder_repository.dart';
 import '../../../unlock/domain/entities/pin_match.dart';
 import '../../../vault/presentation/theme/vault_colors.dart';
 import '../cubit/settings_cubit.dart';
@@ -478,26 +482,71 @@ class _SettingsRow extends StatelessWidget {
   }
 }
 
-class _IntruderLog extends StatelessWidget {
+/// Live preview of the most recent real intruder captures. Shows an empty
+/// state until an actual break-in is recorded.
+class _IntruderLog extends StatefulWidget {
   const _IntruderLog();
 
-  // Demo entries matching the handoff's placeholder log.
-  static const _entries = [
-    ('Hôm nay 09:24', 'Sai mã · 3 lần'),
-    ('Hôm qua 22:41', 'Sai mã · 3 lần'),
-    ('12/07 08:15', 'Sai mã · 4 lần'),
-  ];
+  @override
+  State<_IntruderLog> createState() => _IntruderLogState();
+}
+
+class _IntruderLogState extends State<_IntruderLog> {
+  List<IntruderEvent>? _events;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final result = await getIt<IntruderRepository>().listEvents();
+    if (!mounted) return;
+    setState(() {
+      _events = switch (result) {
+        Ok(:final value) => value,
+        Err() => const [],
+      };
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final events = _events;
+    if (events == null) {
+      return const SizedBox(
+        height: 60,
+        child: Center(
+          child: SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+    if (events.isEmpty) {
+      return const SizedBox(
+        height: 44,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Chưa ghi nhận lần đột nhập nào',
+            style: TextStyle(fontSize: 12, color: VaultColors.textFaint),
+          ),
+        ),
+      );
+    }
     return SizedBox(
       height: 92,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _entries.length,
+        itemCount: events.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          final (time, detail) = _entries[index];
+          final event = events[index];
+          final time = DateFormat('dd/MM HH:mm').format(event.timestamp);
           return ClipRRect(
             borderRadius: BorderRadius.circular(14),
             child: SizedBox(
@@ -505,7 +554,16 @@ class _IntruderLog extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  const CustomPaint(painter: _StripePainter()),
+                  if (event.photo != null)
+                    Image.memory(event.photo!, fit: BoxFit.cover)
+                  else
+                    const ColoredBox(
+                      color: VaultColors.card,
+                      child: Icon(
+                        Icons.no_photography_outlined,
+                        color: VaultColors.textFaint,
+                      ),
+                    ),
                   Positioned(
                     top: 8,
                     right: 8,
@@ -525,19 +583,27 @@ class _IntruderLog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          time,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: VaultColors.text,
+                        Container(
+                          color: Colors.black54,
+                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                          child: Text(
+                            time,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        Text(
-                          detail,
-                          style: const TextStyle(
-                            fontSize: 9.5,
-                            color: VaultColors.red,
+                        Container(
+                          color: Colors.black54,
+                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                          child: Text(
+                            'Sai mã · ${event.attemptCount} lần',
+                            style: const TextStyle(
+                              fontSize: 9.5,
+                              color: VaultColors.red,
+                            ),
                           ),
                         ),
                       ],
@@ -551,32 +617,6 @@ class _IntruderLog extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Diagonal-stripe placeholder standing in for real intruder snapshots.
-class _StripePainter extends CustomPainter {
-  const _StripePainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(
-      Offset.zero & size,
-      Paint()..color = const Color(0xFF1C1C21),
-    );
-    final stripe = Paint()
-      ..color = const Color(0xFF26262B)
-      ..strokeWidth = 5;
-    for (var x = -size.height; x < size.width; x += 14) {
-      canvas.drawLine(
-        Offset(x, size.height),
-        Offset(x + size.height, 0),
-        stripe,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_StripePainter oldDelegate) => false;
 }
 
 class _DisguiseOption extends StatelessWidget {
