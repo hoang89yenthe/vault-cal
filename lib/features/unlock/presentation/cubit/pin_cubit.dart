@@ -25,13 +25,17 @@ class PinCubit extends Cubit<PinState> {
   int _wrongAttempts = 0;
 
   Future<void> addDigit(String digit) async {
-    if (state.error || state.result != PinResult.none) return;
-
-    final input = state.input + digit;
-    if (input.length < 4) {
-      emit(PinState(input: input));
+    if (state.error ||
+        state.result != PinResult.none ||
+        state.input.length >= 4) {
       return;
     }
+
+    // Reflect the tap immediately so the 4th dot fills before the (async)
+    // key-derivation check runs — otherwise the last digit feels laggy.
+    final input = state.input + digit;
+    emit(PinState(input: input));
+    if (input.length < 4) return;
 
     final match = await _credentials.matchPin(input);
     switch (match) {
