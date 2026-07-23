@@ -43,6 +43,7 @@ class _OnboardingViewState extends State<_OnboardingView>
   }
 
   (String, String) _labels(OnboardingStep step) => switch (step) {
+    OnboardingStep.intro => ('', ''),
     OnboardingStep.secret => (
       'Đặt mã bí mật',
       'Dãy số bạn gõ trên máy tính rồi bấm = để mở kho (4–10 số)',
@@ -51,19 +52,14 @@ class _OnboardingViewState extends State<_OnboardingView>
       'Xác nhận mã bí mật',
       'Nhập lại mã bí mật',
     ),
-    OnboardingStep.realPin => ('Đặt PIN kho thật', 'Nhập 4 chữ số'),
-    OnboardingStep.realPinConfirm => ('Xác nhận PIN thật', 'Nhập lại PIN thật'),
-    OnboardingStep.decoyPin => (
-      'Đặt PIN kho giả',
-      'PIN mở kho mồi khi bị ép — phải khác PIN thật',
-    ),
-    OnboardingStep.decoyPinConfirm => ('Xác nhận PIN giả', 'Nhập lại PIN giả'),
+    OnboardingStep.realPin => ('Đặt PIN', 'Nhập 4 chữ số để vào kho'),
+    OnboardingStep.realPinConfirm => ('Xác nhận PIN', 'Nhập lại PIN'),
   };
 
   int _stepNumber(OnboardingStep step) => switch (step) {
+    OnboardingStep.intro => 0,
     OnboardingStep.secret || OnboardingStep.secretConfirm => 1,
     OnboardingStep.realPin || OnboardingStep.realPinConfirm => 2,
-    OnboardingStep.decoyPin || OnboardingStep.decoyPinConfirm => 3,
   };
 
   @override
@@ -77,6 +73,9 @@ class _OnboardingViewState extends State<_OnboardingView>
         },
         builder: (context, state) {
           final cubit = context.read<OnboardingCubit>();
+          if (state.step == OnboardingStep.intro) {
+            return _Intro(onStart: cubit.start);
+          }
           final (title, subtitle) = _labels(state.step);
 
           return SafeArea(
@@ -84,7 +83,7 @@ class _OnboardingViewState extends State<_OnboardingView>
               children: [
                 const SizedBox(height: 24),
                 Text(
-                  'Bước ${_stepNumber(state.step)}/3',
+                  'Bước ${_stepNumber(state.step)}/2',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -165,6 +164,101 @@ class _OnboardingViewState extends State<_OnboardingView>
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _Intro extends StatelessWidget {
+  const _Intro({required this.onStart});
+
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(28, 0, 28, 28),
+        child: Column(
+          children: [
+            const Spacer(),
+            const Icon(
+              Icons.lock_outline,
+              size: 56,
+              color: VaultColors.accentLight,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Kho riêng tư',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+                color: VaultColors.text,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Ứng dụng trông như một máy tính bình thường. '
+              'Gõ mã bí mật của bạn rồi bấm “=” để mở kho ảnh, video và ghi chú '
+              'được mã hoá.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                height: 1.5,
+                color: VaultColors.textSub,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const _IntroPoint(
+              icon: Icons.calculate_outlined,
+              text: 'Đặt mã bí mật để mở kho',
+            ),
+            const _IntroPoint(
+              icon: Icons.pin_outlined,
+              text: 'Đặt mã PIN bảo vệ lớp hai',
+            ),
+            const _IntroPoint(
+              icon: Icons.lock_clock_outlined,
+              text: 'Chỉ 2 bước, làm chưa tới một phút',
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: FilledButton(
+                onPressed: onStart,
+                child: const Text('Bắt đầu'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _IntroPoint extends StatelessWidget {
+  const _IntroPoint({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: VaultColors.accentLight),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14, color: VaultColors.text),
+            ),
+          ),
+        ],
       ),
     );
   }

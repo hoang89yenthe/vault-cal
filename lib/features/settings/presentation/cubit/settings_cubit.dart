@@ -6,15 +6,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/platform/app_icon_channel.dart';
 import '../../../../core/storage/local_storage.dart';
 import '../../../purchases/domain/purchase_service.dart';
+import '../../../unlock/domain/repositories/credentials_repository.dart';
 
 part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit(this._storage, this._purchases)
+  SettingsCubit(this._storage, this._purchases, this._credentials)
     : super(_restore(_storage, _purchases.isPremium)) {
     _premiumSub = _purchases.premiumStream.listen((premium) {
       emit(state.copyWith(premium: premium));
     });
+    refreshDecoy();
   }
 
   static const String _kFingerprint = 'settings_fingerprint';
@@ -23,7 +25,14 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   final LocalStorage _storage;
   final PurchaseService _purchases;
+  final CredentialsRepository _credentials;
   late final StreamSubscription<bool> _premiumSub;
+
+  /// Reloads whether a decoy PIN exists (call after returning from setup).
+  Future<void> refreshDecoy() async {
+    final has = await _credentials.hasDecoyPin();
+    emit(state.copyWith(decoyPinSet: has));
+  }
 
   static SettingsState _restore(LocalStorage storage, bool premium) {
     return SettingsState(

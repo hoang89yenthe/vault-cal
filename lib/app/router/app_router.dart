@@ -95,7 +95,8 @@ final GoRouter appRouter = GoRouter(
       path: '${AppRoutes.changeCode}/:type',
       pageBuilder: (context, state) {
         final type = CodeType.values.byName(state.pathParameters['type']!);
-        return _page(state, ChangeCodePage(type: type));
+        final firstTime = state.uri.queryParameters['firstTime'] == '1';
+        return _page(state, ChangeCodePage(type: type, firstTime: firstTime));
       },
     ),
     GoRoute(

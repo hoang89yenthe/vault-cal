@@ -19,68 +19,50 @@ void main() {
     ).thenAnswer((_) async {});
   });
 
-  void enterPin(OnboardingCubit c, String pin) {
-    for (final d in pin.split('')) {
+  void type(OnboardingCubit c, String digits) {
+    for (final d in digits.split('')) {
       c.addDigit(d);
     }
   }
 
-  test('full happy path initializes with chosen codes', () async {
-    final c = OnboardingCubit(credentials);
+  test('starts on the intro step', () {
+    expect(OnboardingCubit(credentials).state.step, OnboardingStep.intro);
+  });
 
-    // Secret (variable length, needs submitSecret)
-    enterPin(c, '1984');
+  test('happy path sets secret + real PIN, no decoy', () async {
+    final c = OnboardingCubit(credentials);
+    c.start();
+    expect(c.state.step, OnboardingStep.secret);
+
+    type(c, '1984');
     c.submitSecret();
     expect(c.state.step, OnboardingStep.secretConfirm);
-    enterPin(c, '1984');
+    type(c, '1984');
     c.submitSecret();
     expect(c.state.step, OnboardingStep.realPin);
 
-    // Real PIN (auto-submits at 4 digits)
-    enterPin(c, '2468');
+    type(c, '2468'); // auto-advance at 4 digits
     expect(c.state.step, OnboardingStep.realPinConfirm);
-    enterPin(c, '2468');
-    expect(c.state.step, OnboardingStep.decoyPin);
-
-    // Decoy PIN
-    enterPin(c, '1111');
-    expect(c.state.step, OnboardingStep.decoyPinConfirm);
-    enterPin(c, '1111');
+    type(c, '2468');
     await Future<void>.delayed(Duration.zero);
 
     verify(
-      () => credentials.initialize(
-        secret: '1984',
-        realPin: '2468',
-        decoyPin: '1111',
-      ),
+      () => credentials.initialize(secret: '1984', realPin: '2468'),
     ).called(1);
     expect(c.state.done, isTrue);
     await c.close();
   });
 
-  test('mismatched confirmation resets that step with an error', () async {
+  test('mismatched PIN confirmation resets with an error', () async {
     final c = OnboardingCubit(credentials);
-    enterPin(c, '1984');
+    c.start();
+    type(c, '1984');
     c.submitSecret();
-    enterPin(c, '9999');
+    type(c, '1984');
     c.submitSecret();
-    expect(c.state.step, OnboardingStep.secret);
-    expect(c.state.error, isNotNull);
-    await c.close();
-  });
-
-  test('decoy PIN cannot equal the real PIN', () async {
-    final c = OnboardingCubit(credentials);
-    enterPin(c, '1984');
-    c.submitSecret();
-    enterPin(c, '1984');
-    c.submitSecret();
-    enterPin(c, '2468');
-    enterPin(c, '2468');
-    // Decoy same as real → rejected
-    enterPin(c, '2468');
-    expect(c.state.step, OnboardingStep.decoyPin);
+    type(c, '2468');
+    type(c, '9999');
+    expect(c.state.step, OnboardingStep.realPin);
     expect(c.state.error, isNotNull);
     await c.close();
   });

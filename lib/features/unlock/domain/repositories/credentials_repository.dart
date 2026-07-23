@@ -6,12 +6,19 @@ abstract interface class CredentialsRepository {
   Future<bool> isInitialized();
 
   /// Stores the user-chosen codes on first-run onboarding and marks the
-  /// vault initialized. There are no default/seeded codes.
+  /// vault initialized. The decoy PIN is optional (advanced duress feature,
+  /// set later in Settings). There are no default/seeded codes.
   Future<void> initialize({
     required String secret,
     required String realPin,
-    required String decoyPin,
+    String? decoyPin,
   });
+
+  /// Whether a decoy (duress) PIN has been configured.
+  Future<bool> hasDecoyPin();
+
+  /// Sets the decoy PIN for the first time. Fails if it equals the real PIN.
+  Future<Result<void>> setDecoyPin(String pin);
 
   Future<bool> verifySecretCode(String code);
 
