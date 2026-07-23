@@ -28,6 +28,9 @@ class MockPurchaseService implements PurchaseService {
   Stream<bool> get premiumStream => _controller.stream;
 
   @override
+  List<PlanPrice> get prices => const [];
+
+  @override
   Future<Result<void>> buy(PurchasePlan plan) async {
     await Future<void>.delayed(_fakeLatency);
     await _setPremium(true);
