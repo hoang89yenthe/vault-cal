@@ -11,14 +11,10 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
   final SecureStorage _storage;
   final PinHasher _hasher;
 
+  static const _keyInitialized = 'cred_initialized';
   static const _keySecret = 'cred_secret';
   static const _keyRealPin = 'cred_real_pin';
   static const _keyDecoyPin = 'cred_decoy_pin';
-
-  // Defaults from the design handoff, seeded once on first launch.
-  static const _defaultSecret = '1984';
-  static const _defaultRealPin = '2468';
-  static const _defaultDecoyPin = '1111';
 
   String _keyFor(CodeType type) => switch (type) {
     CodeType.secret => _keySecret,
@@ -27,16 +23,20 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
   };
 
   @override
-  Future<void> ensureSeeded() async {
-    await _seed(_keySecret, _defaultSecret);
-    await _seed(_keyRealPin, _defaultRealPin);
-    await _seed(_keyDecoyPin, _defaultDecoyPin);
+  Future<bool> isInitialized() async {
+    return await _storage.read(_keyInitialized) == '1';
   }
 
-  Future<void> _seed(String key, String value) async {
-    if (!await _storage.contains(key)) {
-      await _storage.write(key, await _hasher.hash(value));
-    }
+  @override
+  Future<void> initialize({
+    required String secret,
+    required String realPin,
+    required String decoyPin,
+  }) async {
+    await _storage.write(_keySecret, await _hasher.hash(secret));
+    await _storage.write(_keyRealPin, await _hasher.hash(realPin));
+    await _storage.write(_keyDecoyPin, await _hasher.hash(decoyPin));
+    await _storage.write(_keyInitialized, '1');
   }
 
   @override
@@ -49,9 +49,7 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
   @override
   Future<PinMatch> matchPin(String pin) async {
     final real = await _storage.read(_keyRealPin);
-    if (real != null && await _hasher.verify(pin, real)) {
-      return PinMatch.real;
-    }
+    if (real != null && await _hasher.verify(pin, real)) return PinMatch.real;
     final decoy = await _storage.read(_keyDecoyPin);
     if (decoy != null && await _hasher.verify(pin, decoy)) {
       return PinMatch.decoy;

@@ -29,23 +29,36 @@ void main() {
   setUp(() async {
     storage = FakeSecureStorage();
     repo = CredentialsRepositoryImpl(storage, PinHasher(iterations: 500));
-    await repo.ensureSeeded();
+    await repo.initialize(secret: '1984', realPin: '2468', decoyPin: '1111');
   });
 
-  test('seeds and verifies default secret code', () async {
+  test('is not initialized before setup, is after', () async {
+    final fresh = CredentialsRepositoryImpl(
+      FakeSecureStorage(),
+      PinHasher(iterations: 500),
+    );
+    expect(await fresh.isInitialized(), isFalse);
+    expect(await repo.isInitialized(), isTrue);
+  });
+
+  test('verifies the chosen secret code', () async {
     expect(await repo.verifySecretCode('1984'), isTrue);
     expect(await repo.verifySecretCode('0000'), isFalse);
+  });
+
+  test('no codes verify before initialization', () async {
+    final fresh = CredentialsRepositoryImpl(
+      FakeSecureStorage(),
+      PinHasher(iterations: 500),
+    );
+    expect(await fresh.verifySecretCode('1984'), isFalse);
+    expect(await fresh.matchPin('2468'), PinMatch.none);
   });
 
   test('matches real and decoy PINs', () async {
     expect(await repo.matchPin('2468'), PinMatch.real);
     expect(await repo.matchPin('1111'), PinMatch.decoy);
     expect(await repo.matchPin('9999'), PinMatch.none);
-  });
-
-  test('ensureSeeded is idempotent', () async {
-    await repo.ensureSeeded();
-    expect(await repo.matchPin('2468'), PinMatch.real);
   });
 
   test('changes the real PIN after verifying the old one', () async {
