@@ -1,17 +1,10 @@
 part of 'onboarding_cubit.dart';
 
-enum OnboardingStep {
-  secret,
-  secretConfirm,
-  realPin,
-  realPinConfirm,
-  decoyPin,
-  decoyPinConfirm,
-}
+enum OnboardingStep { intro, secret, secretConfirm, realPin, realPinConfirm }
 
 class OnboardingState extends Equatable {
   const OnboardingState({
-    this.step = OnboardingStep.secret,
+    this.step = OnboardingStep.intro,
     this.input = '',
     this.error,
     this.busy = false,

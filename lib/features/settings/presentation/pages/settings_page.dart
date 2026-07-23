@@ -104,11 +104,20 @@ class _SettingsView extends StatelessWidget {
                     _SettingsRow(
                       icon: Icons.theater_comedy_outlined,
                       tone: folderTone(305),
-                      title: l10n.changeFakePassword,
+                      title: state.decoyPinSet
+                          ? l10n.changeFakePassword
+                          : 'Thiết lập kho giả (chống ép buộc)',
+                      subtitle: state.decoyPinSet
+                          ? null
+                          : 'PIN mở một kho mồi vô hại khi bạn bị ép mở',
                       trailing: const _Chevron(),
-                      onTap: () => context.push(
-                        '${AppRoutes.changeCode}/${CodeType.decoyPin.name}',
-                      ),
+                      onTap: () async {
+                        final suffix = state.decoyPinSet ? '' : '?firstTime=1';
+                        await context.push(
+                          '${AppRoutes.changeCode}/${CodeType.decoyPin.name}$suffix',
+                        );
+                        if (context.mounted) cubit.refreshDecoy();
+                      },
                     ),
                     const _RowDivider(),
                     _SettingsRow(

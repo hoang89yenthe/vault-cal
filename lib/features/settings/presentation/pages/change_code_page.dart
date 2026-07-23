@@ -11,23 +11,29 @@ import '../../../vault/presentation/theme/vault_colors.dart';
 import '../cubit/change_code_cubit.dart';
 
 class ChangeCodePage extends StatelessWidget {
-  const ChangeCodePage({required this.type, super.key});
+  const ChangeCodePage({required this.type, this.firstTime = false, super.key});
 
   final CodeType type;
+  final bool firstTime;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ChangeCodeCubit(getIt<CredentialsRepository>(), type),
-      child: _ChangeCodeView(type: type),
+      create: (_) => ChangeCodeCubit(
+        getIt<CredentialsRepository>(),
+        type,
+        firstTime: firstTime,
+      ),
+      child: _ChangeCodeView(type: type, firstTime: firstTime),
     );
   }
 }
 
 class _ChangeCodeView extends StatefulWidget {
-  const _ChangeCodeView({required this.type});
+  const _ChangeCodeView({required this.type, required this.firstTime});
 
   final CodeType type;
+  final bool firstTime;
 
   @override
   State<_ChangeCodeView> createState() => _ChangeCodeViewState();
@@ -40,11 +46,14 @@ class _ChangeCodeViewState extends State<_ChangeCodeView>
     duration: const Duration(milliseconds: 450),
   );
 
-  String _title(CodeType type) => switch (type) {
-    CodeType.secret => 'Đổi mật mã bí mật',
-    CodeType.realPin => 'Đổi PIN thật',
-    CodeType.decoyPin => 'Đổi PIN giả',
-  };
+  String _title(CodeType type) {
+    if (widget.firstTime) return 'Thiết lập PIN kho giả';
+    return switch (type) {
+      CodeType.secret => 'Đổi mật mã bí mật',
+      CodeType.realPin => 'Đổi PIN thật',
+      CodeType.decoyPin => 'Đổi PIN giả',
+    };
+  }
 
   String _stepLabel(ChangeCodeStep step) => switch (step) {
     ChangeCodeStep.verifyOld => 'Nhập mã hiện tại',

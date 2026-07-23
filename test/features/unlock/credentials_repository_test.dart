@@ -90,4 +90,36 @@ void main() {
     );
     expect(result, isA<Err<void>>());
   });
+
+  group('optional decoy PIN', () {
+    late CredentialsRepositoryImpl noDecoy;
+
+    setUp(() async {
+      noDecoy = CredentialsRepositoryImpl(
+        FakeSecureStorage(),
+        PinHasher(iterations: 500),
+      );
+      // Initialize WITHOUT a decoy PIN (the new light onboarding).
+      await noDecoy.initialize(secret: '1984', realPin: '2468');
+    });
+
+    test('hasDecoyPin reflects whether a decoy was set', () async {
+      expect(await noDecoy.hasDecoyPin(), isFalse);
+      expect(await repo.hasDecoyPin(), isTrue);
+    });
+
+    test('no decoy match until one is set', () async {
+      expect(await noDecoy.matchPin('1111'), PinMatch.none);
+      final result = await noDecoy.setDecoyPin('1111');
+      expect(result, isA<Ok<void>>());
+      expect(await noDecoy.hasDecoyPin(), isTrue);
+      expect(await noDecoy.matchPin('1111'), PinMatch.decoy);
+    });
+
+    test('setDecoyPin rejects a value equal to the real PIN', () async {
+      final result = await noDecoy.setDecoyPin('2468');
+      expect(result, isA<Err<void>>());
+      expect(await noDecoy.hasDecoyPin(), isFalse);
+    });
+  });
 }

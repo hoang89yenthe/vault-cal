@@ -6,8 +6,9 @@ import '../../../unlock/domain/repositories/credentials_repository.dart';
 
 part 'onboarding_state.dart';
 
-/// First-run setup: the user chooses their own secret code, real PIN and
-/// decoy PIN (each entered twice). No default codes exist anymore.
+/// First-run setup. Kept intentionally light: an intro, then the two codes
+/// every user needs — a secret code and a real PIN (each entered twice). The
+/// advanced decoy/duress PIN is opt-in later from Settings, not here.
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit(this._credentials) : super(const OnboardingState());
 
@@ -17,13 +18,17 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   static const int _secretMin = 4;
   static const int _secretMax = 10;
 
-  // First entry of the code currently being confirmed.
   String _secret = '';
-  String _realPin = '';
   String _pendingFirst = '';
 
+  void start() {
+    if (state.step == OnboardingStep.intro) {
+      emit(state.copyWith(step: OnboardingStep.secret));
+    }
+  }
+
   void addDigit(String digit) {
-    if (state.busy || state.done) return;
+    if (state.busy || state.done || state.step == OnboardingStep.intro) return;
     final max = state.isPinStep ? _pinLength : _secretMax;
     if (state.input.length >= max) return;
     final input = state.input + digit;
@@ -48,6 +53,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   Future<void> _submit(String value) async {
     switch (state.step) {
+      case OnboardingStep.intro:
+        return;
       case OnboardingStep.secret:
         _pendingFirst = value;
         emit(state.copyWith(step: OnboardingStep.secretConfirm, input: ''));
@@ -78,32 +85,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
           );
           return;
         }
-        _realPin = value;
-        emit(state.copyWith(step: OnboardingStep.decoyPin, input: ''));
-      case OnboardingStep.decoyPin:
-        if (value == _realPin) {
-          emit(state.copyWith(input: '', error: 'PIN giả phải khác PIN thật'));
-          return;
-        }
-        _pendingFirst = value;
-        emit(state.copyWith(step: OnboardingStep.decoyPinConfirm, input: ''));
-      case OnboardingStep.decoyPinConfirm:
-        if (value != _pendingFirst) {
-          emit(
-            state.copyWith(
-              step: OnboardingStep.decoyPin,
-              input: '',
-              error: 'PIN không khớp, thử lại',
-            ),
-          );
-          return;
-        }
         emit(state.copyWith(busy: true));
-        await _credentials.initialize(
-          secret: _secret,
-          realPin: _realPin,
-          decoyPin: value,
-        );
+        await _credentials.initialize(secret: _secret, realPin: value);
         credentialsInitialized.value = true;
         emit(state.copyWith(busy: false, done: true));
     }

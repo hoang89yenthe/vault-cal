@@ -7,14 +7,20 @@ import '../../../unlock/domain/repositories/credentials_repository.dart';
 
 part 'change_code_state.dart';
 
-/// Reusable 3-step flow: verify current code → enter new → confirm new.
-/// Parameterized by [CodeType] so it serves the secret code and both PINs.
+/// Reusable code flow: (verify current →) enter new → confirm new.
+/// Parameterized by [CodeType]. With [firstTime] the verify-current step is
+/// skipped — used to SET the decoy PIN for the first time from Settings.
 class ChangeCodeCubit extends Cubit<ChangeCodeState> {
-  ChangeCodeCubit(this._credentials, this.type)
-    : super(const ChangeCodeState());
+  ChangeCodeCubit(this._credentials, this.type, {this.firstTime = false})
+    : super(
+        ChangeCodeState(
+          step: firstTime ? ChangeCodeStep.enterNew : ChangeCodeStep.verifyOld,
+        ),
+      );
 
   final CredentialsRepository _credentials;
   final CodeType type;
+  final bool firstTime;
 
   static const int _codeLength = 4;
 
@@ -78,11 +84,13 @@ class ChangeCodeCubit extends Cubit<ChangeCodeState> {
           return;
         }
         emit(state.copyWith(busy: true));
-        final result = await _credentials.changeCode(
-          type: type,
-          oldCode: state.oldCode,
-          newCode: code,
-        );
+        final result = firstTime
+            ? await _credentials.setDecoyPin(code)
+            : await _credentials.changeCode(
+                type: type,
+                oldCode: state.oldCode,
+                newCode: code,
+              );
         switch (result) {
           case Ok():
             emit(state.copyWith(done: true, busy: false));

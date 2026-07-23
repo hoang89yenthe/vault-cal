@@ -90,7 +90,7 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<PurchaseService>(() => MockPurchaseService(getIt()))
     // Feature: settings
     ..registerLazySingleton<SettingsCubit>(
-      () => SettingsCubit(getIt(), getIt()),
+      () => SettingsCubit(getIt(), getIt(), getIt()),
     )
     // Feature: posts (base-project demo)
     ..registerLazySingleton<PostRemoteDataSource>(

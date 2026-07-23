@@ -31,12 +31,29 @@ class CredentialsRepositoryImpl implements CredentialsRepository {
   Future<void> initialize({
     required String secret,
     required String realPin,
-    required String decoyPin,
+    String? decoyPin,
   }) async {
     await _storage.write(_keySecret, await _hasher.hash(secret));
     await _storage.write(_keyRealPin, await _hasher.hash(realPin));
-    await _storage.write(_keyDecoyPin, await _hasher.hash(decoyPin));
+    if (decoyPin != null) {
+      await _storage.write(_keyDecoyPin, await _hasher.hash(decoyPin));
+    }
     await _storage.write(_keyInitialized, '1');
+  }
+
+  @override
+  Future<bool> hasDecoyPin() async {
+    return await _storage.read(_keyDecoyPin) != null;
+  }
+
+  @override
+  Future<Result<void>> setDecoyPin(String pin) async {
+    final real = await _storage.read(_keyRealPin);
+    if (real != null && await _hasher.verify(pin, real)) {
+      return const Err(AuthFailure('PIN giả phải khác PIN thật'));
+    }
+    await _storage.write(_keyDecoyPin, await _hasher.hash(pin));
+    return const Ok(null);
   }
 
   @override
