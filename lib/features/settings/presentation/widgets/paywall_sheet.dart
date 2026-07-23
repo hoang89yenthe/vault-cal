@@ -206,62 +206,63 @@ class _PlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-            decoration: BoxDecoration(
-              color: VaultColors.background,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: highlighted ? VaultColors.gold : VaultColors.cardBorder,
-                width: highlighted ? 1.5 : 1,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: VaultColors.textSub,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  price,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: VaultColors.text,
-                  ),
-                ),
-              ],
-            ),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+        decoration: BoxDecoration(
+          color: VaultColors.background,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: highlighted ? VaultColors.gold : VaultColors.cardBorder,
+            width: highlighted ? 1.5 : 1,
           ),
-          if (badge != null)
-            Positioned(
-              top: -9,
-              right: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: VaultColors.gold,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  badge!,
-                  style: const TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF1B1810),
-                  ),
-                ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Fixed-height badge row so both cards stay the same height and
+            // align, whether or not they carry a "SAVE" badge.
+            SizedBox(
+              height: 20,
+              child: badge == null
+                  ? null
+                  : Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: VaultColors.gold,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1B1810),
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 13, color: VaultColors.textSub),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              price,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: VaultColors.text,
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
