@@ -60,7 +60,7 @@ Future<void> configureDependencies() async {
     // Feature: intruder
     ..registerLazySingleton<SelfieCaptureService>(SelfieCaptureService.new)
     ..registerLazySingleton<IntruderRepository>(
-      () => IntruderRepositoryImpl(getIt()),
+      () => IntruderRepositoryImpl(getIt(), getIt()),
     )
     ..registerLazySingleton<IntruderTrigger>(
       () => CapturingIntruderTrigger(getIt(), getIt(), getIt(), getIt()),
