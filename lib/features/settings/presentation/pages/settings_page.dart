@@ -82,6 +82,14 @@ class _SettingsView extends StatelessWidget {
                 _SettingsCard(
                   children: [
                     _SettingsRow(
+                      icon: Icons.shield_outlined,
+                      tone: folderTone(200),
+                      title: 'Bảo mật hoạt động thế nào',
+                      trailing: const _Chevron(),
+                      onTap: () => context.push(AppRoutes.securityInfo),
+                    ),
+                    const _RowDivider(),
+                    _SettingsRow(
                       icon: Icons.pin_outlined,
                       tone: folderTone(255),
                       title: l10n.changeSecretCode,

@@ -8,6 +8,7 @@ import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/posts/presentation/pages/posts_page.dart';
 import '../../features/intruder/presentation/pages/intruder_log_page.dart';
 import '../../features/settings/presentation/pages/change_code_page.dart';
+import '../../features/settings/presentation/pages/security_info_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/unlock/domain/entities/pin_match.dart';
 import '../../features/unlock/presentation/pages/pin_page.dart';
@@ -30,6 +31,7 @@ abstract final class AppRoutes {
   static const String settings = '/settings';
   static const String changeCode = '/settings/change-code';
   static const String intruderLog = '/settings/intruder-log';
+  static const String securityInfo = '/settings/security-info';
 
   // Base-project demo screens.
   static const String demo = '/demo';
@@ -102,6 +104,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.intruderLog,
       pageBuilder: (context, state) => _page(state, const IntruderLogPage()),
+    ),
+    GoRoute(
+      path: AppRoutes.securityInfo,
+      pageBuilder: (context, state) => _page(state, const SecurityInfoPage()),
     ),
     GoRoute(
       path: AppRoutes.demo,
